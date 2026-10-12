@@ -1,0 +1,105 @@
+{
+ "total": 14,
+ "max": 22,
+ "items": [
+  {
+   "item": 1,
+   "title": "Portfolio coverage of the physical-risk assessment",
+   "framework": "Project addition; closest: IFRS S2 29(c) / HKEX C2 31; IFRS S2 25(a)(i) / C2 27(a)(i)",
+   "score": 1,
+   "max_score": 2,
+   "evidence": "ESG Data Compendium 2025/26, p. 78",
+   "justification": "The asset-level assessment covers 12 assets, 5 of them in Hong Kong (5 of 130 HK assets, about 12% of HK value by our count); portfolio-wide analyses are mentioned but their results are not disclosed."
+  },
+  {
+   "item": 2,
+   "title": "Hazards identified and classified, with time horizons",
+   "framework": "TCFD Strategy (a); IFRS S2 10(a)-(d); HKEX C2 20",
+   "score": 2,
+   "max_score": 2,
+   "evidence": "Compendium pp. 78, 82, 83",
+   "justification": "Broad hazard list, defined short / medium / long horizons and physical classification. Note: heat (a chronic physical risk) is presented in the transition-risk table (p. 84)."
+  },
+  {
+   "item": 3,
+   "title": "Scenario analysis: scenarios used and their range",
+   "framework": "TCFD Strategy (c); IFRS S2 22; HKEX C2 26(b)",
+   "score": 1,
+   "max_score": 2,
+   "evidence": "Compendium pp. 17, 78",
+   "justification": "One physical scenario (SSP5-8.5) for 2030 and 2050; no range of scenarios and none aligned with the latest international agreement."
+  },
+  {
+   "item": 4,
+   "title": "Financial quantification of physical risk",
+   "framework": "TCFD Strategy (b), Metrics (a); IFRS S2 15-18; HKEX C2 24-25",
+   "score": 1,
+   "max_score": 2,
+   "evidence": "Compendium pp. 79, 83",
+   "justification": "Current effects are quantified. The portfolio-level anticipated figure is the historical average plus 20%, not scenario-derived; the scenario-based figures cover 12 assets only."
+  },
+  {
+   "item": 5,
+   "title": "Methodology transparency (models, data, assumptions, how and when)",
+   "framework": "IFRS S2 22(b); HKEX C2 26(b); TCFD Strategy (c)",
+   "score": 1,
+   "max_score": 2,
+   "evidence": "Compendium pp. 78-79",
+   "justification": "Provider, date, scenario and asset selection are stated; hazard data, damage and downtime functions, return periods and validation are not."
+  },
+  {
+   "item": 6,
+   "title": "Asset-level detail",
+   "framework": "IFRS S2 13(b); HKEX C2 21; TCFD Metrics (a)",
+   "score": 1,
+   "max_score": 2,
+   "evidence": "Compendium pp. 78-79",
+   "justification": "Per-asset quantified results for 12 assets only; the hazard heat map is colour-only."
+  },
+  {
+   "item": 7,
+   "title": "Risk-management process and integration",
+   "framework": "TCFD Risk management (a)-(c); IFRS S2 24-26; HKEX C2 27",
+   "score": 1,
+   "max_score": 2,
+   "evidence": "Compendium pp. 17, 82",
+   "justification": "Identification and integration are stated; how climate risks are assessed for likelihood and magnitude, and prioritised against other risks, is not described."
+  },
+  {
+   "item": 8,
+   "title": "Adaptation plans, resourcing and progress",
+   "framework": "TCFD Strategy (b); IFRS S2 14, 29(e); HKEX C2 22, 33",
+   "score": 2,
+   "max_score": 2,
+   "evidence": "Compendium pp. 17, 81, 83; Sustainability Report pp. 23-25",
+   "justification": "Measures, spending and progress are disclosed, with an asset example (Wan Tsui Shopping Centre: climate-related claims down from HK$2.8 million in 2023/24 to zero in 2025/26 after drainage and car park works)."
+  },
+  {
+   "item": 9,
+   "title": "Physical-risk metrics and targets",
+   "framework": "TCFD Metrics and targets (a)-(c); IFRS S2 29, 33-37; HKEX C2 31, 37-40",
+   "score": 1,
+   "max_score": 2,
+   "evidence": "Compendium pp. 80-81; Sustainability Report p. 26",
+   "justification": "Claims-based metrics and an exposure-adjusted metric in development; physical-risk targets are qualitative only."
+  },
+  {
+   "item": 10,
+   "title": "Governance of climate-related risk",
+   "framework": "TCFD Governance (a)-(b); IFRS S2 5-7; HKEX C2 19",
+   "score": 2,
+   "max_score": 2,
+   "evidence": "Compendium p. 82; Annual Report (Governance)",
+   "justification": "Responsible bodies, meeting frequency and management role are disclosed."
+  },
+  {
+   "item": 11,
+   "title": "Consistency with observed events",
+   "framework": "Project addition; closest: IFRS S2 15(a) / 16(a); HKEX C2 24(a)",
+   "score": 1,
+   "max_score": 2,
+   "evidence": "Compendium p. 78; Sustainability Report p. 26",
+   "justification": "Link's disclosed assessment (AXA, 2023/24, compendium p. 78) places Temple Mall North in its lowest damage tier; local media reported its ground floor submerged in September 2023. The assessment accounts for adaptation measures as of 2023/24, which we could not verify. The same assessment states that only surface-water flooding materially affects the assessed assets; Chai Wan Car Service Centre was not among them. At the sea level recorded at Quarry Bay during Typhoon Mangkhut (2018), our model puts the water 0.15 m above the site's entry level and 0.07 m below its lowest floor, so it models no loss."
+  }
+ ]
+}

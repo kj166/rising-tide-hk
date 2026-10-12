@@ -1,0 +1,64 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+
+# Environments
+.venv/
+.env
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Node / site
+node_modules/
+site/dist/
+
+# OS
+.DS_Store
+
+# Raw downloads: never tracked (keep .gitkeep; provenance lives in data/SOURCES.md)
+data/raw/*
+!data/raw/.gitkeep
+
+# Third-party transcriptions and transcribed config values: local only (publication rule,
+# 2026-09-24). Obtain the data from the sources in data/SOURCES.md.
+data/manual_local/*
+!data/manual_local/.gitkeep
+config/local/*
+!config/local/.gitkeep
+
+# Regenerable pipeline outputs (uv run python pipeline/01_assets.py --pilot)
+data/interim/*
+!data/interim/.gitkeep
+
+# Step 3 hazard outputs: regenerable, and coastal_levels.csv reproduces PWDM Tables 3-9A
+# (cite-only source) per station (decision 2026-10-06)
+data/processed/hazards/
+# step 4-5 outputs: regenerable (make model), like hazards/ (2026-10-07)
+data/processed/exposure.parquet
+data/processed/event_exposure.parquet
+data/processed/impact*.csv
+data/processed/heat_whatif.csv
+data/processed/approx_footprint_check.csv
+data/processed/ranking*.csv
+data/processed/adaptation*.csv
+data/processed/hotspots.csv
+# site build (2026-10-08): dependencies and build output are regenerable (make site)
+site/node_modules/
+site/dist/
+# site-mockup (Phase 1 redesign mockups): data is copied from site/public/data, terrain tiles are generated
+site-mockup/node_modules/
+site-mockup/dist/
+site-mockup/public/data/
+# SvelteKit site (Phase 2, 2026-10-08): build output, caches, test artefacts
+site/build/
+site/build-*/
+site/.svelte-kit/
+site/test-results/
+site/playwright-report/

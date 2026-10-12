@@ -1,0 +1,11 @@
+{
+ "very_hot_days_baseline": 14,
+ "very_hot_days_ssp245_2050": 65,
+ "hot_nights_baseline": 21,
+ "hot_nights_ssp245_2050": 87,
+ "whatif_extra_cost_hkd": [
+  8600000.0,
+  17000000.0
+ ],
+ "whatif_label": "illustrative, not a projection"
+}

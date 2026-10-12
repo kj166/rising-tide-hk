@@ -1,0 +1,32 @@
+[project]
+name = "hk-property-climate-risk"
+version = "0.1.0"
+description = "Physical climate risk for Link REIT's Hong Kong properties under Baseline, SSP2-4.5 and SSP5-8.5 to 2050."
+requires-python = ">=3.11"
+dependencies = [
+    "pandas",
+    "numpy",
+    "geopandas",
+    "shapely",
+    "pyproj",
+    "rasterio",
+    "pdfplumber",
+    "requests",
+    "pyyaml",
+    "pyarrow",
+    "matplotlib",
+    "folium",
+    "openpyxl>=3.1.5",
+    "scipy>=1.17.1",
+    "scikit-image>=0.26.0",
+]
+
+[dependency-groups]
+dev = [
+    "pytest",
+    "jupyter",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]

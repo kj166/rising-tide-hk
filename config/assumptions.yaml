@@ -1,0 +1,557 @@
+# Model assumptions. Every value needs a `# source:` comment;
+# unsourced values are marked `# ASSUMPTION`.
+# Values transcribed from third-party documents (e.g. PWDM, HKO) are NOT stored here:
+# keep the key with `null` and its `# source:` + page ref, and put the value in
+# config/local/assumptions.yaml (gitignored). pipeline/config.py overlays it on load.
+
+return_periods: [2, 5, 10, 20, 50, 100, 200]  # source: PWDM Corrigendum 1/2022 Tables 3–9A (pp. 8–10) + CLAUDE.md conventions; p = 1 / return period
+
+datum:
+  # Chart Datum is 0.146 m below Principal Datum, so mPD = mCD - 0.146
+  # (e.g. 3.88 mCD = 3.734 mPD).
+  chart_datum_below_pd_m: 0.146  # source: PWDM Part 1 (data/raw/pwdm_part1_current.pdf) §2.2.1 Datum, PDF p. 13: "The CD is 0.146 m below the PD"
+
+crs:
+  analysis: "EPSG:2326"  # source: CLAUDE.md conventions (HK1980 Grid)
+  web: "EPSG:4326"       # source: CLAUDE.md conventions
+
+elevation:
+  # Ground level for flood depth = CEDD 2020 LiDAR DTM (0.5 m tiles, mPD). iB1000
+  # BASELEVEL is not used for flood depth. The LandsD 5 m DTM is used only for coarse
+  # sea-connectivity and landslide slope (int32 whole metres, ±5 m).
+  ground_source: "cedd_lidar_dtm_2020"  # source: decision 2026-09-24, elevation pilot (notebooks/00_elevation_pilot.ipynb)
+  # entry_level_mpd = this percentile of LiDAR ground in a ring outside the footprint
+  entry_level_percentile: 10  # source: elevation pilot 2026-09-24 (notebooks/00_elevation_pilot.ipynb)
+  entry_level_sensitivity: "ring_median"  # source: elevation pilot 2026-09-24 (notebooks/00_elevation_pilot.ipynb)
+  ring_width_m: 10  # source: elevation pilot 2026-09-24 (notebooks/00_elevation_pilot.ipynb)
+  # Assets without a footprint: approximate levels (p10 = entry, median) from LiDAR within
+  # this radius of the accepted point(s); footprint_method 'point_buffer_approx'
+  approx_point_buffer_m: 30  # source: user instruction 2026-10-06
+  # Assets whose 2020 LiDAR circle has no data fall back to the LandsD 5 m DTM (sea = 0
+  # pixels dropped), level_source 'dtm_5m_fallback', low confidence. This asset list only.
+  dtm_5m_fallback_valuation_nos: [129]  # source: user instruction 2026-10-06 (no. 129: DTM_2020 tile 11SE14B has no data within 100 m of the point)
+  # podium_flag = (min iB1000 BASELEVEL - ring median) > this
+  podium_flag_threshold_m: 2.0  # source: decision 2026-09-24 (elevation pilot: Quayside +6.9 m, Wan Tsui blocks +5.8 m vs ring median)
+  # slope_flag = (ring p90 - ring p10) > slope_flag_threshold_m (ground falls across the site)
+  slope_flag_percentiles: [10, 90]  # source: user instruction 2026-10-06
+  slope_flag_threshold_m: 3.0  # ASSUMPTION
+
+pilot:
+  # Week 1 pilot: the 5 HK assets in the Link/AXA physical risk table, by valuation no.
+  # (T Town, TKO Gateway, Temple Mall North, Wan Tsui Commercial Complex, The Quayside)
+  valuation_nos: [2, 4, 8, 58, 126]  # source: Link ESG Data Compendium FY2025/26 PDF p. 80 / printed p. 79 (HK rows), matched to valuation nos. via data/manual/asset_name_aliases.csv
+
+geocode:
+  # scripts/geocode_als.py --parse: flag an ALS match whose top score is below this
+  min_score: 60  # source: user instruction 2026-10-06
+
+footprint:
+  # Footprint = iB1000 Building blocks named as the asset (seed) + unnamed blocks touching
+  # a seed; the iB1000 Site layer is estate boundaries, not lots (decision 2026-10-01).
+  sheet_search_buffer_m: 150  # source: decision 2026-09-24 (pipeline/01_assets.py spec)
+  # Assets with no seed within sheet_search_buffer_m: seed search and seed suggestions
+  # extend to the sheets within this radius of the accepted point(s)
+  seed_search_radius_m: 300  # source: user instruction 2026-10-06 (seed suggestions within 300 m)
+  touch_tolerance_m: 0.5      # ASSUMPTION
+  edge_tolerance_m: 0.01      # ASSUMPTION (elevation pilot, notebooks/00_elevation_pilot.ipynb)
+  # QA suggestion only (the user decides in data/manual/footprint_overrides.csv):
+  # suggest 'exclude' for an unnamed block whose BASELEVEL is more than this above the
+  # seeds' min BASELEVEL (sits on the podium; likely residential, not Link-owned).
+  suggest_exclude_above_seed_m: 3.0  # source: user instruction 2026-10-01
+  # Assets that get an ALS point but no footprint, entry level or flags
+  point_only_valuation_nos: [130]  # source: decision 2026-09-24 (no. 130 Off Anderson Road Development Site, 'under_development' at 31 Mar 2026); user instruction 2026-10-06
+
+hand_footprint_review:
+  # scripts/hand_footprint_review.py (decision 2026-10-07): QA maps + candidate blocks for
+  # hand footprints, relocation proposals and shared points. Review aid only: hints, never
+  # written to data/manual; no effect on results.
+  valuation_nos: []             # source: user decisions 2026-10-07: no. 128 seed applied (block 2), no. 92 closed (footprint_unconfirmed); was [128, 92]
+  relocation_valuation_nos: [56, 38]  # source: check 2026-10-07 (accepted ALS point at the wrong estate: "Lo Lung Hang Street", Hung Hom; "Tai Yuen", Hung Shui Kiu)
+  shared_point_valuation_nos: [104, 107]  # source: user decision 2026-10-07
+  radius_m: 120                  # ASSUMPTION (blocks listed around the point)
+  shared_point_radius_m: 250     # ASSUMPTION (Sau Mau Ping estate spans ~500 m)
+  relocation_radius_m: 200       # ASSUMPTION (Tai Yuen: annex and car park ~160 m from the shopping centre)
+  tower_height_m: 40             # ASSUMPTION (ROOFLEVEL - BASELEVEL above this = tower, hint 'exclude')
+  small_area_m2: 50              # ASSUMPTION (smaller blocks = minor structures, hint 'exclude')
+  # Consistency test before applying a hand-footprint seed (user decision 2026-10-07): a block
+  # is supported when its estimate is within +/- consistency_tolerance of the valuation figure.
+  #   GFA estimate = footprint x storeys, storeys = height / storey_height_m
+  #   spaces estimate = footprint x decks / carpark_m2_per_space.mid, decks = height / carpark_deck_height_m
+  storey_height_m: 3.5           # ASSUMPTION (user decision 2026-10-07)
+  carpark_deck_height_m: 3.0     # ASSUMPTION (user decision 2026-10-07)
+  consistency_tolerance: 0.30    # ASSUMPTION (user decision 2026-10-07, "within about +/-30%")
+
+triage:
+  # data/interim/asset_triage.csv (step 1): assets whose maps the user reviews
+  als_max_distance_m: 100  # source: user instruction 2026-10-06 (ALS point > 100 m from footprint)
+  # "entry level outside the district's typical range" (user instruction 2026-10-06), made
+  # concrete as Tukey fences over our own assets in the same ALS district:
+  # [Q1 - k*IQR, Q3 + k*IQR], only for districts with at least min_assets entry levels
+  district_outlier_iqr_k: 1.5        # ASSUMPTION (conventional Tukey fence)
+  district_outlier_min_assets: 4     # ASSUMPTION
+  # Review priority A = entry level (approximate for unmatched assets) below this, else B
+  priority_a_below_mpd: 10  # source: user instruction 2026-10-06
+
+footprint_rules_v1:
+  # scripts/footprint_rules.py: automatic decisions on touching unnamed blocks, written to
+  # data/manual/footprint_overrides.csv with decided_by = rule_v1 (never over a user row)
+  no_levels_max_area_m2: 300  # ASSUMPTION (exclude if no BASELEVEL/ROOFLEVEL and smaller than this)
+  above_seed_min_m: 3.0       # ASSUMPTION (exclude if BASELEVEL > seeds' min BASELEVEL + this)
+
+valuation:
+  # Step 2: status 'under_development' (no income, no GFA; excluded from damage and BI)
+  under_development_valuation_nos: [130]  # source: decision 2026-09-24 (no. 130 Off Anderson Road Development Site, 'under_development' at 31 Mar 2026)
+  # status_flag 'post_incident_drc_valuation': full replacement cost kept (the structure
+  # exists); income_status 'uncertain'; excluded from the cost/valuation ratio summary.
+  # Valuation basis changed after the November 2025 fire at Wang Fuk Court; see Link disclosure.
+  post_incident_drc_valuation_nos: [94]  # source: Link FY2025/26 Annual Report B2, PDF p. 212 (footnote *) and p. 172; user decision 2026-10-06
+  # Replacement cost (step 2), low/mid/high:
+  #   building = IFA / efficiency_ratio x cfa_to_gfa_ratio x building rate   (IFA rows)
+  #              GFA x cfa_to_gfa_ratio x building rate                      (reported GFA rows)
+  #   building rate by building_type: retail (default), office, industrial (overrides below)
+  #   carpark = car_park_spaces x carpark_m2_per_space x car park rate    (every row with spaces)
+  # Blank while any input below is null. Arcadis values are transcribed, so they live in
+  # config/local/assumptions.yaml (hard rule); the keys here keep null + source + page ref.
+  price_basis: "HK$ at 4th Quarter 2025 (Arcadis handbook rates); no adjustment to the 31 Mar 2026 valuation date"  # source: user decision 2026-10-06 (Arcadis TPI 2025 Q4 = 1915, handbook PDF p. 28; HK forecast 2026 (-)1.5%, PDF p. 27)
+  # HK$/m2 CFA, "Out-of-town shopping centre, average standard", TOTAL column; mid = midpoint
+  retail_rate_hkd_per_m2_cfa:
+    low: null   # source: Arcadis Construction Cost Handbook China & Hong Kong 2026, PDF p. 6 (printed p. 7), "CONSTRUCTION COSTS FOR HONG KONG", at 4th Quarter 2025
+    mid: null   # source: midpoint of low/high (user decision 2026-10-06)
+    high: null  # source: as low
+  # HK$/m2 CFA, "Medium/high rise offices, average standard", TOTAL; mid = midpoint.
+  # Used for low/mid; the high case uses office_high_case_rate_hkd_per_m2_cfa instead.
+  office_rate_hkd_per_m2_cfa:
+    low: null   # source: Arcadis Construction Cost Handbook China & Hong Kong 2026, PDF p. 6 (printed p. 7)
+    mid: null   # source: midpoint of low/high (user decision 2026-10-06)
+    high: null  # source: as low (kept for reference; not used by the high case)
+  # Office high case (sensitivity, no. 126 The Quayside): "High rise offices, prestige
+  # quality", TOTAL, upper end of the range, HK$/m2 CFA
+  office_high_case_rate_hkd_per_m2_cfa: null  # source: Arcadis Construction Cost Handbook China & Hong Kong 2026, PDF p. 6 (printed p. 7); user decision 2026-10-06
+  # HK$/m2 CFA, "Owner operated factories, low rise, light weight industry", TOTAL (the only
+  # HK industrial row; no warehouse row); mid = midpoint
+  industrial_rate_hkd_per_m2_cfa:
+    low: null   # source: Arcadis Construction Cost Handbook China & Hong Kong 2026, PDF p. 6 (printed p. 7)
+    mid: null   # source: midpoint of low/high (user decision 2026-10-06)
+    high: null  # source: as low
+  # building_type per valuation no. where not 'retail' (no. 127 700 Nathan Road, retail podium
+  # + office tower, stays retail by decision)
+  building_type_overrides:  # source: user decision 2026-10-06
+    126: office      # The Quayside
+    128: industrial  # Hung Hom Car Service Centre
+    129: industrial  # Chai Wan Car Service Centre
+  # Sensitivity only (user decision 2026-10-06): "Retail malls, high end", TOTAL, HK$/m2 CFA
+  retail_rate_high_end_sensitivity_hkd_per_m2_cfa:
+    low: null   # source: Arcadis Construction Cost Handbook China & Hong Kong 2026, PDF p. 6 (printed p. 7)
+    mid: null   # source: midpoint of low/high
+    high: null  # source: as low
+  # CFA : GFA, "Office / Commercial"; buildings only, not car parks ("do not include any
+  # associated car parking area"). Also applied to industrial (nos. 128, 129): the handbook
+  # gives no industrial ratio  # ASSUMPTION
+  cfa_to_gfa_ratio:
+    low: null   # source: Arcadis Construction Cost Handbook China & Hong Kong 2026, PDF p. 33 (printed p. 61), "CFA To GFA Ratio"
+    mid: null   # source: midpoint of low/high (user decision 2026-10-06)
+    high: null  # source: as low
+  # GFA = IFA / efficiency_ratio (valuation xlsx gives IFA only); gfa_m2 uses `mid`.
+  # Cost low uses ratio high (and vice versa): a higher ratio means less GFA.
+  # Uniform across assets: scales absolute losses, cannot change asset rankings.
+  # Supporting data point: no. 127 700 Nathan Road (office tower + retail podium): whole-building GFA in the ESG Data
+  # Compendium FY2025/26 (PDF p. 115) / valuation IFA = 0.61 (areas not quoted: Link inputs stay private).
+  # No HK retail GFA/IFA pair found in Link's reports (search 2026-10-06).
+  efficiency_ratio:  # ASSUMPTION (user decision 2026-10-06)
+    low: 0.60
+    mid: 0.70
+    high: 0.80
+  # Gross m2 per car space = bay + aisle share, x (1 + circulation allowance):
+  #   bay 5 x 2.5 = 12.5 m2 (HKPSG Ch. 8 Table 11 note (g), PDF p. 73; PNAP APP-111 App. A Table 1)
+  #   aisle share (90 deg, bays both sides) = aisle width x 2.5 / 2 (PNAP APP-111 App. A Table 1, PDF p. 3):
+  #     low  one-way min. 5.5 m       -> 6.875 m2 -> 19.375 m2, x 1.10 = 21.3
+  #     mid  one-way desirable 6.0 m  -> 7.5 m2   -> 20.0 m2,   x 1.20 = 24.0
+  #     high two-way desirable 7.5 m  -> 9.375 m2 -> 21.875 m2, x 1.30 = 28.4
+  #   circulation allowance 10/20/30% (ramps, columns, walls, cores, single-sided rows): ASSUMPTION
+  carpark_m2_per_space:  # ASSUMPTION (derivation above; user decision 2026-10-06)
+    low: 21.3
+    mid: 24.0
+    high: 28.4
+  # HK$/m2 CFA, TOTAL column; mid = midpoint
+  carpark_rate_hkd_per_m2_cfa:
+    multistorey:  # "Multi storey car parks, above ground(<4 levels)"
+      low: null   # source: Arcadis Construction Cost Handbook China & Hong Kong 2026, PDF p. 6 (printed p. 7)
+      mid: null   # source: midpoint of low/high (user decision 2026-10-06)
+      high: null  # source: as low
+    basement:     # "Underground/basement car parks (<3 levels)"
+      low: null   # source: Arcadis Construction Cost Handbook China & Hong Kong 2026, PDF p. 6 (printed p. 7)
+      mid: null   # source: midpoint of low/high (user decision 2026-10-06)
+      high: null  # source: as low
+  # car_park_type 'basement' (car_park_type_method 'derived_from_levels') where step 1's
+  # lowest_floor_mpd < entry_level_mpd - this; else 'multistorey' ('default_multistorey')
+  carpark_basement_below_entry_m: 2.0  # source: user decision 2026-10-06
+
+depth_damage_curve:
+  # JRC global flood depth-damage functions (Huizinga et al. 2017), ASIA, Commercial buildings
+  # (decision 2026-09-24): data/raw/jrc/jrc_depth_damage.xlsx, sheet "Damage functions",
+  # rows 13-21 (col B depth, col F ASIA). Values in config/local/assumptions.yaml; check sheet
+  # docs/internal/week3_transcription_check.md. Linear interpolation between points; >= 6 m -> 1.
+  # Note (JRC report §5.3, data/raw/jrc/jrc_depth_damage_report.pdf p. 72): building-based maximum
+  # damage is per m2 of building FOOTPRINT; here the fraction is applied to whole-building
+  # replacement cost (user spec 2026-10-07), which overstates losses for multi-storey assets.
+  depths_m: null        # source: jrc_depth_damage.xlsx "Damage functions" B13:B21
+  damage_fraction: null # source: jrc_depth_damage.xlsx "Damage functions" F13:F21 (ASIA, Commercial buildings)
+  # Gentler-curve sensitivity (user decision 2026-10-07): same sheet and depths, EUROPE (col C).
+  damage_fraction_europe: null # source: jrc_depth_damage.xlsx "Damage functions" C13:C21 (EUROPE, Commercial buildings)
+
+loss_basis:
+  # Exposed value for coastal direct loss (user decision 2026-10-07; revises the 2026-10-01
+  # "footprint QA-only" rule for this use only; replacement cost still from GFA):
+  # exposed_value = replacement cost x exposed_share; exposed_share = 1 / n_storeys (+ one more
+  # storey's share for a basement car park); approximate-circle assets take the portfolio median.
+  # Whole-building loss kept in step 5 as the upper-bound sensitivity (direct_loss_whole_*).
+  storey_height_m: 3.5             # ASSUMPTION (user decision 2026-10-07; same as hand_footprint_review.storey_height_m)
+  contained_block_min_share: 0.9   # ASSUMPTION (a block >= 90% inside a lower-roofed block of the same footprint, e.g. tower on podium, counts from that roof up)
+
+business_interruption:
+  # Restoration time by flood depth (decisions 2026-10-07): FEMA Hazus 7.0 Flood Model Technical
+  # Manual (June 2025). Labelled "maximum restoration time (Hazus 7.0, US default)": BI is an upper
+  # bound. Rows [min depth ft, max depth ft, maximum days]; stepped, not interpolated; the -4..0 ft
+  # row (below first floor) is not used. Values in config/local/assumptions.yaml.
+  # Downtime = retail_income_share x COM1 + (1 - retail_income_share) x COM10 (step 2 income split),
+  # except assets in occupancy_by_valuation_no, which use one table for their whole income (the source
+  # sheet books the car service centres and The Quayside as "Retail" whatever the use).
+  # BI is not computed while a table in use is null.
+  restoration_bins_ft:
+    com1: null   # source: Hazus 7.0 Flood Technical Manual Table 6-8 (COM1 Retail Trade), printed p. 6-11 (PDF p. 52)
+    com10: null  # source: Hazus 7.0 Flood Technical Manual Table 6-10 (COM10 Parking), printed p. 6-12 (PDF p. 53)
+    com3: null   # source: Hazus 7.0 Flood Technical Manual Table 6-4 (RES1, RES3A, RES3B and COM3), printed p. 6-10 (PDF p. 51)
+    com4: null   # source: Hazus 7.0 Flood Technical Manual Table 6-7 (RES5, RES6, COM4, COM5, COM7, GOV1, GOV2, EDU1, EDU2), printed p. 6-11 (PDF p. 52)
+  occupancy_by_valuation_no:   # source: user decision 2026-10-07 (physical use, not accounting label)
+    126: com4   # The Quayside: offices = COM4 Professional/Technical Services (Table 5-2 "prof/tech services")
+    128: com3   # Hung Hom Car Service Centre: vehicle repair = COM3 Personal & Repair Services (Table 5-2)
+    129: com3   # Chai Wan Car Service Centre: as no. 128
+  days_factor_sensitivity: 0.5  # ASSUMPTION (user decision 2026-10-07: BI sensitivity at 50% of the Hazus days)
+  exclude_valuation_nos: [94, 130]  # source: user decision 2026-10-07 (no. 94 income_status 'uncertain'; no. 130 under development)
+  revenue_basis: "annual_net_passing_income / 365"  # source: data/raw/link_valuation_2026-03-31.xlsx, sheet "Summary Report 260331", net passing income column
+
+heat_whatif:
+  # Illustrative cooling-cost what-if, not a projection (user decision 2026-10-07; pipeline/impact_heat.py,
+  # run by step 5). Values in config/local/assumptions.yaml.
+  link_hk_electricity_mwh: null   # source: data/raw/link_esg_compendium_fy2526.pdf, Environmental Performance Data Table, Hong Kong Portfolio, Electricity 2025/2026 (PDF p. 39, printed p. 38); note (3): landlord-controlled consumption only
+  emsd_retail_ac_tj: null         # source: data/raw/heat/emsd_hkeeud2025.pdf, Table 38 (printed p. 53, PDF p. 54), Retail Segment, 2023, Air Conditioning (TJ)
+  emsd_retail_total_tj: null      # source: as emsd_retail_ac_tj, 2023 Total (TJ)
+  tariff_cents_per_kwh:
+    clp: null          # source: data/raw/heat/info_gov_hk_20251118_2026_tariff.html (CLP Power average Net Tariff from 1 Jan 2026)
+    hk_electric: null  # source: data/raw/heat/hkelectric_2026_tariff_press_release.pdf (Average Net Tariff Jan 2026)
+  # Utility by ALS district. ASSUMPTION: HK Electric = Hong Kong Island districts (its release cites
+  # "customers on Hong Kong and Lamma Islands"; no Link asset on Lamma); all other districts CLP.
+  hk_electric_districts: ["CENTRAL AND WESTERN DISTRICT", "WAN CHAI DISTRICT", "EASTERN DISTRICT", "SOUTHERN DISTRICT"]
+  # Assets with a blank district (manual points), all in Kowloon / New Territories by location
+  # (northing >= 818,256 m, north of Victoria Harbour): nos. 2 T Town, 4 TKO Gateway, 8 Temple Mall
+  # North, 126 The Quayside, 128 Hung Hom CSC. No. 130 is excluded (under development).
+  blank_district_clp_nos: [2, 4, 8, 126, 128]  # source: check of accepted points 2026-10-07
+  tariff_weight: gfa_m2           # ASSUMPTION (electricity proportional to GFA; no per-asset consumption published)
+  demand_changes: [0.10, 0.20]    # source: user decision 2026-10-07 (illustrative +10% / +20% cooling demand)
+
+ranking_weights:        # must sum to 1 (checked in tests/test_config.py); user decision 2026-10-07
+  # Heat is excluded from the asset ranking (identical for every asset: HKO territory-wide series);
+  # reported at portfolio level only (heat_scenarios.csv, heat_whatif.csv).
+  coastal_flood: 0.50   # ASSUMPTION (user decision 2026-10-07)
+  rain_flood: 0.30      # ASSUMPTION (user decision 2026-10-07)
+  landslide: 0.20       # ASSUMPTION (user decision 2026-10-07)
+
+ranking:
+  # Step 6 (decision 2026-10-07). Two lenses, same rain / landslide terms, coastal term differs:
+  #   absolute = coastal EAL HK$ (direct + BI, mid cost, median SLR, central onset, truncated)
+  #   relative = coastal EAL / annual net passing income
+  # Coastal term: log10(1 + x / median of positive x) then min-max over the operating assets (the
+  # median scale keeps one tiny EAL from taking half the range; ASSUMPTION). Rain: continuous scenario
+  # index rain_index_cont_<scenario>, min-max. Landslide: landslide_score (0-4), min-max.
+  scenarios: [baseline, ssp245_2050, ssp585_2050, ssp585_2100]
+  headline_scenario: ssp245_2050   # source: user decision 2026-10-07 (top-10 tables)
+  top_n: 10                        # source: user decision 2026-10-07
+  weight_test_factors: [0.5, 1.0, 1.5]  # source: user decision 2026-10-07 (27 combinations, renormalised)
+  exclude_valuation_nos: [130]     # source: decision 2026-09-24 (under development: no income, no cost)
+  relative_exclude_valuation_nos: [94]  # source: user decision 2026-10-08 (income_status 'uncertain'); listed separately
+  tier1_min_survival: 24           # source: user decision 2026-10-08 (Tier 1 = top 10 in >= 24 of 27 variants)
+  hotspot_top_n: 5                 # source: user decision 2026-10-08 (per-hazard hotspots)
+
+adaptation:
+  # Break-even method (user decision 2026-10-07; replaces cost-based payback): a demountable flood
+  # barrier raises onset_level_mpd; avoided EAL = EAL(current onset) - EAL(raised onset) from the step 4-5
+  # functions; break-even budget = present value of the avoided EAL over the horizon. Central case
+  # (decision 2026-10-08): avoided EAL ramps linearly from its baseline-climate value (year 1) to its
+  # ssp245_2050 value (year 25) (ASSUMPTION). Upper bound: the ssp245_2050 value held flat for every year.
+  barrier_heights_m: [0.5, 1.0]    # ASSUMPTION (user decision 2026-10-07: 0.5 m central, 1.0 m sensitivity)
+  scenario: ssp245_2050            # source: user decision 2026-10-07
+  ramp_start_scenario: baseline    # source: user decision 2026-10-08 (central case starts at the baseline climate)
+  horizon_years: 25                # source: user decision 2026-10-07
+  discount_rates: [0.04, 0.02, 0.06]  # ASSUMPTION (user decision 2026-10-07: 4% real central; 2% and 6% sensitivities)
+  top_n_coastal: 10                # source: user decision 2026-10-07 (top 10 by coastal EAL)
+  top_n_rain: 5                    # ASSUMPTION (rain-driven assets listed, not quantified; includes no. 8)
+  # Order-of-magnitude reference only (UK residential, 2016 prices), never used as Hong Kong costs:
+  # Herefordshire Council "Resilience Measures and Indicative Costs" (31 Jul 2024; Defra FD2682).
+  reference_costs_gbp_uk_residential_2016:  # source: data/raw/costs/herefordshire_pfr_resilience_measures_indicative_costs.pdf, pp. 1-2 (GBP ranges)
+    demountable_door_guard: null            # source: p. 2 "Demountable Door Guards"
+    automatic_door_guard: null              # source: p. 2 "Automatic Door Guards"
+    garage_driveway_barrier: null           # source: p. 2 "Garage/Driveway Barrier"
+    non_return_valve_110mm_soil_pipe: null  # source: p. 1 "Non-return valves 110mm soil waste pipe"
+    sump_pump: null                         # source: p. 1 "Sump Pump"
+    move_electrics_above_flood_level: null  # source: p. 2 "Move electrics well above likely flood level"
+
+extreme_sea_level_mpd:
+  # Baseline extreme still-water sea levels (mPD) by tide station and return period (years),
+  # PWDM Corrigendum 1/2022 Tables 3-8, 9A (decision 2026-09-24). Relative to the AR6 base
+  # year 1995-2014 (table notes). Transcribed values in config/local/assumptions.yaml.
+  # Identical in the current PWDM Part 1 (data/raw/pwdm_part1_current.pdf pp. 119-122).
+  # Not double counting with HKO SLR: the levels are already on the AR6 1995-2014 base
+  # (Table 4 note: Quarry Bay/North Point "adjusted by +0.07m to AR6 base year (1995-2014)",
+  # p. 9; Table 5 note: Tai Po Kau +0.04 m, p. 9; Tables 3, 6, 7, 8, 9A notes: "relative to the
+  # AR6 base year (1995-2014)", pp. 8-10), the same base as the HKO projections, so SLR is
+  # added once, on top.
+  quarry_bay_north_point:
+    2: null  # source: PWDM Corrigendum 1/2022 Table 4, p. 9
+    5: null  # source: PWDM Corrigendum 1/2022 Table 4, p. 9
+    10: null  # source: PWDM Corrigendum 1/2022 Table 4, p. 9
+    20: null  # source: PWDM Corrigendum 1/2022 Table 4, p. 9
+    50: null  # source: PWDM Corrigendum 1/2022 Table 4, p. 9
+    100: null  # source: PWDM Corrigendum 1/2022 Table 4, p. 9
+    200: null  # source: PWDM Corrigendum 1/2022 Table 4, p. 9
+  tai_po_kau:
+    2: null  # source: PWDM Corrigendum 1/2022 Table 5, p. 9
+    5: null  # source: PWDM Corrigendum 1/2022 Table 5, p. 9
+    10: null  # source: PWDM Corrigendum 1/2022 Table 5, p. 9
+    20: null  # source: PWDM Corrigendum 1/2022 Table 5, p. 9
+    50: null  # source: PWDM Corrigendum 1/2022 Table 5, p. 9
+    100: null  # source: PWDM Corrigendum 1/2022 Table 5, p. 9
+    200: null  # source: PWDM Corrigendum 1/2022 Table 5, p. 9
+  tsim_bei_tsui:
+    2: null  # source: PWDM Corrigendum 1/2022 Table 6, p. 9
+    5: null  # source: PWDM Corrigendum 1/2022 Table 6, p. 9
+    10: null  # source: PWDM Corrigendum 1/2022 Table 6, p. 9
+    20: null  # source: PWDM Corrigendum 1/2022 Table 6, p. 9
+    50: null  # source: PWDM Corrigendum 1/2022 Table 6, p. 9
+    100: null  # source: PWDM Corrigendum 1/2022 Table 6, p. 9
+    200: null  # source: PWDM Corrigendum 1/2022 Table 6, p. 9
+  tai_o:
+    2: null  # source: PWDM Corrigendum 1/2022 Table 9A, p. 10
+    5: null  # source: PWDM Corrigendum 1/2022 Table 9A, p. 10
+    10: null  # source: PWDM Corrigendum 1/2022 Table 9A, p. 10
+    20: null  # source: PWDM Corrigendum 1/2022 Table 9A, p. 10
+    50: null  # source: PWDM Corrigendum 1/2022 Table 9A, p. 10
+    100: null  # source: PWDM Corrigendum 1/2022 Table 9A, p. 10
+    200: null  # source: PWDM Corrigendum 1/2022 Table 9A, p. 10
+  waglan_island:
+    2: null  # source: PWDM Corrigendum 1/2022 Table 7, p. 10
+    5: null  # source: PWDM Corrigendum 1/2022 Table 7, p. 10
+    10: null  # source: PWDM Corrigendum 1/2022 Table 7, p. 10
+    20: null  # source: PWDM Corrigendum 1/2022 Table 7, p. 10
+    50: null  # source: PWDM Corrigendum 1/2022 Table 7, p. 10
+    100: null  # source: PWDM Corrigendum 1/2022 Table 7, p. 10
+    200: null  # source: PWDM Corrigendum 1/2022 Table 7, p. 10
+  ko_lau_wan:
+    2: null  # source: PWDM Corrigendum 1/2022 Table 3, p. 8
+    5: null  # source: PWDM Corrigendum 1/2022 Table 3, p. 8
+    10: null  # source: PWDM Corrigendum 1/2022 Table 3, p. 8
+    20: null  # source: PWDM Corrigendum 1/2022 Table 3, p. 8
+    50: null  # source: PWDM Corrigendum 1/2022 Table 3, p. 8
+    100: null  # source: PWDM Corrigendum 1/2022 Table 3, p. 8
+    200: null  # source: PWDM Corrigendum 1/2022 Table 3, p. 8
+  chi_ma_wan:
+    2: null  # source: PWDM Corrigendum 1/2022 Table 8, p. 10
+    5: null  # source: PWDM Corrigendum 1/2022 Table 8, p. 10
+    10: null  # source: PWDM Corrigendum 1/2022 Table 8, p. 10
+    20: null  # source: PWDM Corrigendum 1/2022 Table 8, p. 10
+    50: null  # source: PWDM Corrigendum 1/2022 Table 8, p. 10
+    100: null  # source: PWDM Corrigendum 1/2022 Table 8, p. 10
+    200: null  # source: PWDM Corrigendum 1/2022 Table 8, p. 10
+
+tide_stations:
+  # PWDM Part 1 Figure 2 "Locations of Tide Stations" (data/raw/pwdm_part1_current.pdf, PDF p. 152),
+  # coordinate table, [degrees, minutes, seconds] N / E. Lok On Pai dropped (no extreme sea
+  # level table in PWDM Corr. 1/2022; user decision 2026-10-06). Values in
+  # config/local/assumptions.yaml; check sheet docs/internal/station_coordinates_check.md.
+  coordinate_crs: "EPSG:4326"  # ASSUMPTION (Figure 2 does not state the geodetic datum; stations are snapped to the open-sea mask)
+  quarry_bay_north_point:
+    lat_dms: null  # source: PWDM Part 1 Figure 2, PDF p. 152, row "Quarry Bay"
+    lon_dms: null  # source: as lat_dms
+  tai_po_kau:
+    lat_dms: null  # source: PWDM Part 1 Figure 2, PDF p. 152, row "Tai Po Kau"
+    lon_dms: null  # source: as lat_dms
+  tsim_bei_tsui:
+    lat_dms: null  # source: PWDM Part 1 Figure 2, PDF p. 152, row "Tsim Bei Tsui"
+    lon_dms: null  # source: as lat_dms
+  tai_o:
+    lat_dms: null  # source: PWDM Part 1 Figure 2, PDF p. 152, row "Tai O"
+    lon_dms: null  # source: as lat_dms
+  waglan_island:
+    lat_dms: null  # source: PWDM Part 1 Figure 2, PDF p. 152, row "Waglan Island"
+    lon_dms: null  # source: as lat_dms
+  ko_lau_wan:
+    lat_dms: null  # source: PWDM Part 1 Figure 2, PDF p. 152, row "Ko Lau Wan"
+    lon_dms: null  # source: as lat_dms
+  chi_ma_wan:
+    lat_dms: null  # source: PWDM Part 1 Figure 2, PDF p. 152, row "Chi Ma Wan"
+    lon_dms: null  # source: as lat_dms
+
+coastal:
+  # Step 3 (pipeline/03_hazards.py), coastal still-water model (decisions 2026-10-06).
+  # Station assignment: shortest water path on an open-sea mask built from the LandsD 5 m DTM
+  # (sea = 0), aggregated to this cell size; a 25 m cell is sea when most of its 5 m cells are 0.
+  sea_mask_cell_m: 25          # source: user decision 2026-10-06
+  sea_mask_majority: 0.5       # ASSUMPTION (share of 5 m sea cells for a 25 m sea cell)
+  # Morphological closing of the 25 m mask (3 x 3, this many times, ~50 m): the DTM records
+  # bridge decks across channels (Tsing Ma, Kap Shui Mun, Ting Kau, Stonecutters, Shing Mun
+  # River), which otherwise cut Rambler Channel, Tsuen Wan bay, Shing Mun River and Kai Tak off
+  # the open sea (checked 2026-10-06: 1 iteration leaves Rambler Channel cut). Inland water
+  # (inland_water_points_e_n) is removed first so the closing cannot join it across a dam.
+  sea_mask_close_iterations: 2  # ASSUMPTION
+  # Ambiguous: runner-up station's water path <= ratio x the winner's, or the straight-line
+  # nearest station differs from the water-path winner
+  station_ambiguity_ratio: 1.5         # ASSUMPTION (user decision 2026-10-06)
+  # Material: the ambiguous candidates' baseline extreme sea levels at this RP differ by more than
+  station_material_diff_m: 0.10        # ASSUMPTION (user decision 2026-10-06)
+  station_material_rp: 100             # source: plan 2026-10-06 (1-in-100 compared)
+  # Station rule (user decision 2026-10-07, replaces case-by-case review): Tai Po Kau is
+  # eligible only for assets draining to Tolo Harbour (Sha Tin, Ma On Shan, Tai Po). Reason:
+  # Tolo Harbour is a semi-enclosed basin with local surge amplification, so its levels do not
+  # apply outside it. "Draining to Tolo Harbour" = ALS district of the accepted point in this
+  # list (Ma On Shan is in Sha Tin District); a blank district is not eligible. For every other
+  # asset Tai Po Kau is dropped from winner, runner-up and straight-line candidates.
+  # Remaining material ambiguous assets keep the water-path station as central; the highest
+  # candidate gives station_alt and level_station_high_mpd (coastal_levels.csv, not a scenario).
+  tolo_harbour_station: tai_po_kau     # ASSUMPTION (user decision 2026-10-07; reason above)
+  tolo_harbour_districts: ["SHA TIN DISTRICT", "TAI PO DISTRICT"]  # ASSUMPTION (user decision 2026-10-07: Sha Tin, Ma On Shan, Tai Po)
+  # Connectivity on the 5 m DTM (whole metres): pass h floods cells with DTM <= h that are
+  # 4-connected to the sea. Level W uses pass floor(W); connected only at floor(W) + 1 = uncertain.
+  connectivity_passes_m: [3, 4, 5, 6, 7, 8]  # source: user decision 2026-10-06
+  connectivity_proximity_m: 50               # ASSUMPTION (user decision 2026-10-06): sea-connected wet cells within this distance of the footprint / approx circle
+  # Sea seeds = DTM zero-valued components (4-connected, 5 m) of at least this area, which
+  # keeps tidal channels cut off by bridges in the DTM (Rambler Channel, Shing Mun River, ...)
+  connectivity_sea_min_area_ha: 1.0          # ASSUMPTION
+  # Zero-valued DTM components that are inland water, not sea: any component containing one
+  # of these points (EPSG:2326) is dropped from the seeds
+  # LiDAR along the route to the sea (user decision 2026-10-07): for these assets the
+  # connectivity class comes from the CEDD 2020 LiDAR DTM (0.5 m) instead of the 5 m passes.
+  # Route = shortest path through the sea-connected wet cells of the lowest 5 m DTM pass that
+  # reaches the asset (within lidar_route_window_m of it, up to lidar_route_max_pass_m); LiDAR
+  # tiles = those intersecting the route + asset buffered by lidar_corridor_m. Sill = lowest
+  # still-water level at which sea-connected LiDAR cells lie within lidar_proximity_m of the
+  # footprint / approx circle (bisection to lidar_sill_tolerance_m). LiDAR no-data cells are
+  # filled from the 5 m DTM. Bare-earth DTM: walls, parapets and flood gates are not resolved.
+  lidar_refine_valuation_nos: [126, 128, 92, 50, 94, 41, 35, 49, 96]  # source: user decision 2026-10-07 (7 'uncertain' + 3 'isolated_low'); no. 56 left out until its accepted point is fixed (geocoded to Lo Lung Hang Street, Hung Hom)
+  # ...plus every asset whose entry level is below this (onset >= entry, so the onset table for
+  # onset < 6 mPD is complete and LiDAR-based)
+  lidar_refine_below_entry_mpd: 6.0  # source: user decision 2026-10-07 (return-period table for onset < 6 mPD)
+  lidar_route_window_m: 5000     # ASSUMPTION (5 m DTM search window around the asset)
+  lidar_route_max_pass_m: 15     # ASSUMPTION (above any modelled 2050 level)
+  lidar_corridor_m: 100          # ASSUMPTION (half-width of the LiDAR corridor along the route)
+  lidar_proximity_m: 10          # ASSUMPTION (= elevation.ring_width_m, the ring that sets entry_level_mpd)
+  lidar_sill_tolerance_m: 0.01   # ASSUMPTION (bisection precision)
+  # Onset level = lowest still-water level that floods the asset: max(entry level, LiDAR sill)
+  # for LiDAR-refined assets, max(entry level, first 5 m pass that reaches it) otherwise.
+  # Sensitivity: LiDAR-based onsets shifted by +/- this (systematic vertical error of the 2020
+  # LiDAR DTM). The CSDI metadata (data/raw/lidar_dtm_2020/lidar_dtm2020_metadata_csdi.xml,
+  # fetched 2026-10-07) states no vertical accuracy, only "The definition of the ground under
+  # trees may be less accurate".
+  lidar_vertical_accuracy_m: 0.15  # ASSUMPTION (no published figure found; user to confirm)
+  # Approx-footprint check (step 4; planned Week 3 item, decision 2026-10-06/07): approximate-circle
+  # assets whose onset is within within_m of this level are listed for possible hand footprints.
+  approx_footprint_check:
+    scenario: ssp245_2050  # source: user decision 2026-10-07
+    return_period: 200     # source: user decision 2026-10-07
+    slr_quantile: median   # ASSUMPTION (central SLR)
+    within_m: 1.0          # source: decision 2026-10-06 ("within 1 m of a modelled flood level")
+  inland_water_points_e_n:
+    - [844637, 837369]  # ASSUMPTION: 1,092 ha zero-valued DTM component with dam-height ground around it (ring median 8 m) = Plover Cove Reservoir (centroid computed 2026-10-06)
+
+rain:
+  # Rain flooding indicators (option b, decisions 2026-10-06 / 2026-10-07); step 3
+  # (pipeline/hazard_rain.py). No new LiDAR. DSD points (data/manual_local/dsd_flood_prone_areas.csv)
+  # stay internal; only rain_score / rain_class are publishable.
+  # score = DSD proximity points (nearest point of any group: <= dsd_near_m -> 2, <= dsd_mid_m -> 1)
+  #       + 1 if local low spot (ring_median_mpd - entry_level_mpd >= low_spot_m)
+  #       + 1 if basement car park (step 2 car_park_type 'basement')
+  # class: 0 low, 1-2 medium, >= 3 high. Scenario index = score x (1 + HKO Rx1day % change / 100).
+  dsd_near_m: 100      # ASSUMPTION
+  dsd_mid_m: 250       # ASSUMPTION
+  low_spot_m: 0.5      # ASSUMPTION (entry level at least this far below the ring median)
+  class_medium_min: 1  # ASSUMPTION
+  class_high_min: 3    # ASSUMPTION
+  # Continuous score for ranking (decision 2026-10-07; classes stay for display):
+  #   2 x max(0, 1 - dsd_nearest_m / cont_dsd_decay_m) + min(1, low_spot_m / cont_low_spot_full_m) + basement
+  cont_dsd_decay_m: 500        # ASSUMPTION (proximity weight falls to 0 at this distance)
+  cont_low_spot_full_m: 2.0    # ASSUMPTION (low-spot weight saturates at this depth)
+
+landslide:
+  # Landslide indicators (decision 2026-10-06 plan; step 3, pipeline/hazard_landslide.py): our own
+  # derived metric, never presented as GEO data. Slope from the LandsD 5 m DTM (Horn 3 x 3, whole
+  # metres: coarse); HLC = GEO Historical Landslide Catchments points (HLC_1924-2019.gdb, layer
+  # HLC), counted unchanged within hlc_radius_m of the footprint / approx circle / point.
+  # score = slope points (p90 slope within slope_buffer_m: >= steep -> 2, >= moderate -> 1)
+  #       + HLC points (count >= hlc_many -> 2, >= 1 -> 1); class 0-1 low, 2 medium, 3-4 high.
+  slope_buffer_m: 50        # ASSUMPTION
+  slope_moderate_deg: 15    # ASSUMPTION
+  slope_steep_deg: 30       # ASSUMPTION
+  hlc_radius_m: 200         # ASSUMPTION
+  hlc_many: 3               # ASSUMPTION
+  class_medium_min: 2       # ASSUMPTION
+  class_high_min: 3         # ASSUMPTION
+
+coastal_sensitivity:
+  # Future option, sensitivity HIGH case only (decision 2026-09-24): replace the PWDM
+  # 2022 Tables 4 and 5 levels at Quarry Bay/North Point and Tai Po Kau with the
+  # Appendix D tables that include pre-1954 storm records (1874-2019). Not used yet.
+  pre1954_extreme_sea_levels_mpd:
+    quarry_bay_north_point: null  # source: PWDM Corrigendum 1/2022 Appendix D, Table D1, p. 31
+    tai_po_kau: null              # source: PWDM Corrigendum 1/2022 Appendix D, Table D2, p. 31
+
+event_check:
+  # Hato (2017) / Mangkhut (2018) sanity check (decision 2026-10-07): HKO maximum sea level,
+  # m above Chart Datum, at the PWDM stations of this model; converted to mPD with
+  # pipeline/datum.py. Values in config/local/assumptions.yaml (third-party transcription);
+  # check sheet docs/internal/transcription_check.md. Stations without a reading (tai_o,
+  # chi_ma_wan, ko_lau_wan) are "no observation", never filled from another station. Shek Pik
+  # and Tai Miu Wan have readings but are not stations of this model (not transcribed).
+  max_sea_level_mcd:
+    hato_2017:
+      quarry_bay_north_point: null  # source: HKO Tropical Cyclones in 2017, Table 3.3.4 (data/raw/hko_tc/hko_tc2017_table334_hato_sea_level.html), row "Quarry Bay", Maximum sea level Height (m)
+      tai_po_kau: null              # source: as above, row "Tai Po Kau"
+      tsim_bei_tsui: null           # source: as above, row "Tsim Bei Tsui"
+      waglan_island: null           # source: as above, row "Waglan Island*" (* incomplete data)
+    mangkhut_2018:
+      quarry_bay_north_point: null  # source: HKO Tropical Cyclones in 2018, Table 3.5.5 (data/raw/hko_tc/hko_tc2018_table355_mangkhut_sea_level.html), row "Quarry Bay"
+      tai_po_kau: null              # source: as above, row "Tai Po Kau"
+      tsim_bei_tsui: null           # source: as above, row "Tsim Bei Tsui"
+      waglan_island: null           # source: as above, table note ("severely damaged by Mangkhut ... recorded before damage"); not a table row
+  # readings HKO marks as incomplete: the true maximum may have been higher (lower bound only)
+  incomplete:
+    hato_2017: [waglan_island]      # source: Table 3.3.4, "* incomplete data"
+    mangkhut_2018: [waglan_island]  # source: Table 3.5.5 note (station damaged)
+
+flood_extents:
+  # "Raise the sea" slider (design brief docs/DESIGN_BRIEF.md, 2026-10-08): bathtub extents on the
+  # LandsD 5 m DTM (pipeline/hazard_extents.py, step 3 layer 'extents' -> 07_export flood_extents.geojson).
+  # Land cells with DTM <= pass that are 4-connected to the coastal sea seeds (coastal.connectivity_*).
+  # Whole metres because the DTM is whole metres (+/- 5 m); illustration only, never used for asset results.
+  passes_m: [3, 4, 5, 6, 7]   # ASSUMPTION (proposal 2026-10-08, for Jeff's approval): spans the modelled still-water levels, all stations and scenarios (2.8-6.7 mPD)
+  min_area_m2: 10000           # ASSUMPTION: parts and holes smaller than 1 ha (400 DTM cells) dropped (file size: 2.3 MB vs 4.6 MB)
+  simplify_m: 20               # ASSUMPTION: Douglas-Peucker tolerance (4 DTM cells; display only)
+
+terrain_tiles:
+  # Published terrain tiles for the site's 3D maps (decision 2026-10-08): pipeline/terrain_tiles.py, written by
+  # 07_export.py to site/public/data/terrain/{z}/{x}/{y}.png (terrarium encoding) from the LandsD 5 m DTM.
+  zooms: [5, 13]   # source: design brief / mockup 2026-10-08 (z5 needed by pitched views at the horizon; 256 tiles, ~12 MB)
+  attribution: "Terrain derived from the LandsD 5 m Digital Terrain Model, HKSAR Government, via the CSDI Portal"  # source: user decision 2026-10-08
+
+site_export:
+  # Margin facts for named assets (decision 2026-10-08, The Quayside sentence): onset (LiDAR sill / entry) minus the
+  # still-water level, in whole cm, plus whether a rarer return period already reaches the site. Only cm margins and
+  # labels are exported (margins.json), never the mPD levels (export contract).
+  margin_assets: [126]   # source: user decision 2026-10-08
+  margin_cases:          # source: user decision 2026-10-08 (wording of the approved sentence)
+    - {scenario: ssp245_2050, slr_quantile: median, return_period: 100}
+    - {scenario: ssp245_2050, slr_quantile: high, return_period: 100}
+    - {scenario: ssp585_2050, slr_quantile: high, return_period: 100}
+  reach_cases:
+    - {scenario: ssp245_2050, slr_quantile: median, return_period: 200}
+  # Observed-event offsets for named assets (decision 2026-10-08, story step 2): event still-water level minus the
+  # entry level and lowest floor minus the event level, whole cm; the cited HKO peak (m above Chart Datum) goes with it.
+  event_assets:
+    - {valuation_no: 129, event: mangkhut_2018, station: quarry_bay_north_point, gauge_name: "Quarry Bay", source: "Hong Kong Observatory, Tropical Cyclones in 2018, Table 3.5.5"}  # source: user decision 2026-10-08

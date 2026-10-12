@@ -1,0 +1,58 @@
+{
+ "wm1_chai_wan_cargo_handling_basin": {
+  "src": "img/wm1_chai_wan_cargo_handling_basin.jpg",
+  "srcset_webp": "img/wm1_chai_wan_cargo_handling_basin-800.webp 800w, img/wm1_chai_wan_cargo_handling_basin-1600.webp 1600w",
+  "width": 1600,
+  "height": 1065,
+  "caption": "Chai Wan Cargo Handling Basin, July 2011. Right of centre: the Chivas Godown building, which the Lands Department map matches to Chai Wan Car Service Centre.",
+  "alt": "Warehouse buildings and crane barges along the sea wall of Chai Wan Cargo Handling Basin under a cloudy sky.",
+  "credit": "Photo: Mk2010, cropped (adaptation), CC BY-SA 3.0, via Wikimedia Commons",
+  "author": "Mk2010",
+  "page": "https://commons.wikimedia.org/wiki/File:Chai_Wan_Cargo_Handling_Basin.jpg",
+  "licence": "CC BY-SA 3.0",
+  "licence_url": "https://creativecommons.org/licenses/by-sa/3.0",
+  "adaptation": "cropped to 3:2 for display on the Story page (adaptation); resized"
+ },
+ "wm3_victoria_harbour_sunrise": {
+  "src": "img/wm3_victoria_harbour_sunrise.jpg",
+  "srcset_webp": "img/wm3_victoria_harbour_sunrise-800.webp 800w, img/wm3_victoria_harbour_sunrise-1600.webp 1600w",
+  "width": 1600,
+  "height": 729,
+  "caption": "Victoria Harbour at sunrise, seen from Lugard Road, September 2025.",
+  "alt": "Panorama from the Peak at sunrise: Central's towers in the foreground, Victoria Harbour and Kowloon beyond.",
+  "credit": "Photo: Benh LIEU SONG (Flickr), cropped (adaptation), CC BY-SA 4.0, via Wikimedia Commons",
+  "author": "Benh LIEU SONG (Flickr)",
+  "page": "https://commons.wikimedia.org/wiki/File:Victoria_Harbour,_Hong_Kong_at_sunrise.jpg",
+  "licence": "CC BY-SA 4.0",
+  "licence_url": "https://creativecommons.org/licenses/by-sa/4.0",
+  "adaptation": "cropped to fill the Story hero (adaptation); resized"
+ },
+ "wm4_heng_fa_chuen_harbourfront_mangkhut": {
+  "src": "img/wm4_heng_fa_chuen_harbourfront_mangkhut.jpg",
+  "srcset_webp": "img/wm4_heng_fa_chuen_harbourfront_mangkhut-800.webp 800w, img/wm4_heng_fa_chuen_harbourfront_mangkhut-1600.webp 1600w",
+  "width": 1600,
+  "height": 1067,
+  "caption": "Heng Fa Chuen harbourfront, next to Chai Wan, two days after Typhoon Mangkhut (18 September 2018).",
+  "alt": "A garden between residential towers covered in sand, rubble and torn-up paving; residents walk through the debris.",
+  "credit": "Photo: Wpcpey, cropped (adaptation), CC BY-SA 4.0, via Wikimedia Commons",
+  "author": "Wpcpey",
+  "page": "https://commons.wikimedia.org/wiki/File:Heng_Fa_Chuen_Harbourfront_after_Typhoon_Mangkhut_201809.jpg",
+  "licence": "CC BY-SA 4.0",
+  "licence_url": "https://creativecommons.org/licenses/by-sa/4.0",
+  "adaptation": "cropped to 3:2 for display on the Story page (adaptation); resized"
+ },
+ "wm5_central_harbourfront_mangkhut": {
+  "src": "img/wm5_central_harbourfront_mangkhut.jpg",
+  "srcset_webp": "img/wm5_central_harbourfront_mangkhut-800.webp 800w, img/wm5_central_harbourfront_mangkhut-1600.webp 1600w",
+  "width": 1600,
+  "height": 1200,
+  "caption": "Mangkhut's waves did this. Our model covers still water only, so it understates risk on the seafront.",
+  "alt": "A harbourfront promenade at night with paving bricks torn up and scattered in front of the sea wall; Kowloon's skyline across the water.",
+  "credit": "Photo: Anthony Ivanoff, CC0 (public domain dedication), via Wikimedia Commons",
+  "author": "Anthony Ivanoff",
+  "page": "https://commons.wikimedia.org/wiki/File:Central_Harbourfront_in_Hong_Kong_damaged_by_Typhoon_Mangkhut_(2018).jpg",
+  "licence": "CC0",
+  "licence_url": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+  "adaptation": "none (resized, not cropped)"
+ }
+}

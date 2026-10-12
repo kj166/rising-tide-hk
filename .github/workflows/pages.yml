@@ -1,0 +1,60 @@
+# Build the Rising Tide site (SvelteKit, static) and deploy it to GitHub Pages.
+# The site reads only the published data in site/public/data; no model run happens here.
+name: Deploy site to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      BASE_PATH: /rising-tide-hk
+      # The LandsD aerial thumbnail and logo stay off until LandsD confirms the logo file
+      # (docs/PUBLISH_MANIFEST.md, pre-push item 7). Set the repository variable to "true" only after that.
+      SHOW_LANDSD_AERIAL: ${{ vars.SHOW_LANDSD_AERIAL || 'false' }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Site URL from the repository owner (or the SITE_URL repository variable)
+        env:
+          OWNER: ${{ github.repository_owner }}
+          SITE_URL_VAR: ${{ vars.SITE_URL }}
+        run: |
+          if [ -n "$SITE_URL_VAR" ]; then url="$SITE_URL_VAR"; else url="https://${OWNER,,}.github.io/rising-tide-hk"; fi
+          echo "SITE_URL=$url" >> "$GITHUB_ENV"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: site/package-lock.json
+      - name: Install
+        working-directory: site
+        run: npm ci --no-audit --no-fund
+      - name: Build
+        working-directory: site
+        run: npm run build
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: site/build
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

@@ -1,0 +1,332 @@
+{
+ "scenarios": {
+  "baseline": {
+   "eal_total_hkd": [
+    1800000.0,
+    6800000.0
+   ],
+   "eal_direct_hkd": [
+    820000.0,
+    2300000.0
+   ],
+   "eal_bi_hkd": [
+    990000.0,
+    4500000.0
+   ],
+   "share_of_net_income_pct": [
+    0.023,
+    0.087
+   ],
+   "n_assets_with_coastal_loss": 6,
+   "top3_share_pct": [
+    74.0,
+    79.0
+   ],
+   "top3_valuation_nos": [
+    129,
+    41,
+    12
+   ],
+   "top3_names": [
+    "Chai Wan Car Service Centre",
+    "Lek Yuen Plaza",
+    "Wo Che Plaza"
+   ],
+   "n_assets_reached": 8,
+   "reached_no_loss_names": [
+    "Oi Tung Shopping Centre",
+    "Tai Wo Plaza"
+   ],
+   "assets_to_watch": {
+    "coastal": [
+     "Chai Wan Car Service Centre"
+    ],
+    "landslide": [
+     "Car Park within King Lai Court",
+     "Car Park within Ning Fung Court",
+     "Kwong Yuen Shopping Centre",
+     "Retail and Car Park within Ching Wah Court"
+    ],
+    "rain": [
+     "Temple Mall North"
+    ]
+   }
+  },
+  "ssp245_2050": {
+   "eal_total_hkd": [
+    7200000.0,
+    23000000.0
+   ],
+   "eal_direct_hkd": [
+    3500000.0,
+    8500000.0
+   ],
+   "eal_bi_hkd": [
+    3700000.0,
+    15000000.0
+   ],
+   "share_of_net_income_pct": [
+    0.092,
+    0.3
+   ],
+   "n_assets_with_coastal_loss": 17,
+   "top3_share_pct": [
+    42.0,
+    56.0
+   ],
+   "top3_valuation_nos": [
+    129,
+    128,
+    41
+   ],
+   "top3_names": [
+    "Chai Wan Car Service Centre",
+    "Hung Hom Car Service Centre",
+    "Lek Yuen Plaza"
+   ],
+   "n_assets_reached": 18,
+   "reached_no_loss_names": [
+    "Tai Wo Plaza"
+   ],
+   "assets_to_watch": {
+    "coastal": [
+     "Chai Wan Car Service Centre"
+    ],
+    "landslide": [
+     "Car Park within King Lai Court",
+     "Car Park within Ning Fung Court",
+     "Kwong Yuen Shopping Centre",
+     "Retail and Car Park within Ching Wah Court"
+    ],
+    "rain": [
+     "Temple Mall North"
+    ]
+   }
+  },
+  "ssp585_2050": {
+   "eal_total_hkd": [
+    7500000.0,
+    24000000.0
+   ],
+   "eal_direct_hkd": [
+    3800000.0,
+    9100000.0
+   ],
+   "eal_bi_hkd": [
+    3700000.0,
+    15000000.0
+   ],
+   "share_of_net_income_pct": [
+    0.096,
+    0.3
+   ],
+   "n_assets_with_coastal_loss": 17,
+   "top3_share_pct": [
+    41.0,
+    56.0
+   ],
+   "top3_valuation_nos": [
+    129,
+    128,
+    41
+   ],
+   "top3_names": [
+    "Chai Wan Car Service Centre",
+    "Hung Hom Car Service Centre",
+    "Lek Yuen Plaza"
+   ],
+   "n_assets_reached": 18,
+   "reached_no_loss_names": [
+    "Tai Wo Plaza"
+   ],
+   "assets_to_watch": {
+    "coastal": [
+     "Chai Wan Car Service Centre"
+    ],
+    "landslide": [
+     "Car Park within King Lai Court",
+     "Car Park within Ning Fung Court",
+     "Kwong Yuen Shopping Centre",
+     "Retail and Car Park within Ching Wah Court"
+    ],
+    "rain": [
+     "Temple Mall North"
+    ]
+   }
+  },
+  "ssp585_2100": {
+   "eal_total_hkd": [
+    68000000.0,
+    120000000.0
+   ],
+   "eal_direct_hkd": [
+    34000000.0,
+    45000000.0
+   ],
+   "eal_bi_hkd": [
+    34000000.0,
+    77000000.0
+   ],
+   "share_of_net_income_pct": [
+    0.87,
+    1.6
+   ],
+   "n_assets_with_coastal_loss": 21,
+   "top3_share_pct": [
+    56.0,
+    63.0
+   ],
+   "top3_valuation_nos": [
+    129,
+    128,
+    126
+   ],
+   "top3_names": [
+    "Chai Wan Car Service Centre",
+    "Hung Hom Car Service Centre",
+    "The Quayside"
+   ],
+   "n_assets_reached": 22,
+   "reached_no_loss_names": [
+    "Tin Chak Shopping Centre"
+   ],
+   "assets_to_watch": {
+    "coastal": [
+     "Chai Wan Car Service Centre"
+    ],
+    "landslide": [
+     "Car Park within King Lai Court",
+     "Car Park within Ning Fung Court",
+     "Kwong Yuen Shopping Centre",
+     "Retail and Car Park within Ching Wah Court"
+    ],
+    "rain": [
+     "Temple Mall North"
+    ]
+   }
+  }
+ },
+ "labels": {
+  "baseline": "1995–2014 climate",
+  "ssp245_2050": "SSP2-4.5 2050",
+  "ssp585_2050": "SSP5-8.5 2050",
+  "ssp585_2100": "SSP5-8.5 2100 (sensitivity)"
+ },
+ "mangkhut_modelled_loss_hkd": 0.0,
+ "n_assets": 129,
+ "n_assets_total": 130,
+ "reached_rp": [
+  {
+   "valuation_no": 12,
+   "name": "Wo Che Plaza",
+   "baseline": 200,
+   "ssp245_2050": 200
+  },
+  {
+   "valuation_no": 18,
+   "name": "Tai Wo Plaza",
+   "baseline": 200,
+   "ssp245_2050": 200
+  },
+  {
+   "valuation_no": 26,
+   "name": "Chung On Shopping Centre",
+   "baseline": null,
+   "ssp245_2050": 200
+  },
+  {
+   "valuation_no": 27,
+   "name": "Sha Kok Commercial Centre",
+   "baseline": null,
+   "ssp245_2050": 200
+  },
+  {
+   "valuation_no": 37,
+   "name": "Yu Chui Shopping Centre",
+   "baseline": null,
+   "ssp245_2050": 200
+  },
+  {
+   "valuation_no": 38,
+   "name": "Tai Yuen Commercial Centre",
+   "baseline": null,
+   "ssp245_2050": 200
+  },
+  {
+   "valuation_no": 41,
+   "name": "Lek Yuen Plaza",
+   "baseline": 200,
+   "ssp245_2050": 200
+  },
+  {
+   "valuation_no": 44,
+   "name": "Sun Chui Shopping Centre",
+   "baseline": null,
+   "ssp245_2050": 200
+  },
+  {
+   "valuation_no": 49,
+   "name": "Long Ping Commercial Centre",
+   "baseline": null,
+   "ssp245_2050": 200
+  },
+  {
+   "valuation_no": 50,
+   "name": "Oi Tung Shopping Centre",
+   "baseline": 200,
+   "ssp245_2050": 100
+  },
+  {
+   "valuation_no": 57,
+   "name": "Kwong Fuk Commercial Centre",
+   "baseline": 200,
+   "ssp245_2050": 200
+  },
+  {
+   "valuation_no": 66,
+   "name": "Sam Shing Commercial Centre",
+   "baseline": null,
+   "ssp245_2050": 100
+  },
+  {
+   "valuation_no": 92,
+   "name": "Retail and Car Park within Tsui Wan Estate",
+   "baseline": null,
+   "ssp245_2050": 200
+  },
+  {
+   "valuation_no": 94,
+   "name": "Car Park within Wang Fuk Court",
+   "baseline": 200,
+   "ssp245_2050": 200
+  },
+  {
+   "valuation_no": 96,
+   "name": "Car Park within Ming Nga Court",
+   "baseline": null,
+   "ssp245_2050": 200
+  },
+  {
+   "valuation_no": 126,
+   "name": "The Quayside",
+   "baseline": null,
+   "ssp245_2050": 200
+  },
+  {
+   "valuation_no": 128,
+   "name": "Hung Hom Car Service Centre",
+   "baseline": 200,
+   "ssp245_2050": 100
+  },
+  {
+   "valuation_no": 129,
+   "name": "Chai Wan Car Service Centre",
+   "baseline": 50,
+   "ssp245_2050": 20
+  }
+ ],
+ "n_footprints": 86,
+ "under_development_names": [
+  "Off Anderson Road Development Site (SD3 Lot 1078)"
+ ]
+}

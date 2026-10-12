@@ -1,0 +1,301 @@
+# Climate scenarios. All values are placeholders until sourced.
+# Every value needs a `# source:` comment; unsourced values are marked `# ASSUMPTION`.
+# Values transcribed from third-party documents (PWDM Table 44, HKO projections) are
+# NOT stored here: keep the key with `null` and its `# source:` + page ref, and put the
+# value in config/local/scenarios.yaml (gitignored). pipeline/config.py overlays it.
+
+# sea_level_rise_m low/high = HKO "likely range": "The probability for the likely range to
+# cover the outcome is at least 66%" (hko_msl_projection.html). Describe it that way on the
+# site, not as a percentile range.
+
+baseline:            # 1995-2014 climate (label "1995–2014 climate" on the site, never "today")
+  period: [1995, 2014]
+  # Zero by construction: HKO projections and PWDM 2022 extreme sea levels are both relative
+  # to the 1995-2014 average / AR6 base year (hko_msl_projection.html; PWDM Corr. 1/2022 Tables 3-9A notes)
+  sea_level_rise_m:
+    median: 0.0  # source: baseline period = HKO/AR6 base period 1995-2014 (definition, not a projection)
+    low: 0.0     # source: as median
+    high: 0.0    # source: as median
+  # Rain / heat (decision 2026-10-07): changes are 0 by construction (HKO projections are relative
+  # to 1995-2014); the 1995-2014 averages HKO states on each page are transcribed (config/local).
+  rx1day_change_pct: 0.0           # source: baseline period = HKO base period 1995-2014 (definition)
+  mean_temp_change_c: 0.0          # source: as rx1day_change_pct
+  rx1day_mm: null                  # source: HKO annual maximum daily rainfall (Rx1day) projection data (data/raw/hko_rainfall_projection.html): "Average annual maximum daily rainfall at the Hong Kong Observatory during 1995-2014"
+  mean_temp_c: null                # source: HKO annual mean temperature projection data (data/raw/hko_temp_projection.html): "Average annual mean temperature at the Hong Kong Observatory during 1995-2014"
+  very_hot_days:
+    mean: null                     # source: HKO projection data of very hot days (data/raw/hko_hot_days_projection.html): "Average annual number of very hot days in Hong Kong during 1995-2014"
+    low: null                      # source: no likely range for the observed baseline (stays null)
+    high: null                     # source: as low
+  hot_nights:
+    mean: null                     # source: HKO projection data of hot nights (data/raw/hko_hot_nights_projection.html): "Average annual number of hot nights in Hong Kong during 1995-2014"
+    low: null                      # source: no likely range for the observed baseline (stays null)
+    high: null                     # source: as low
+  storm_surge_increase_m: 0.0  # source: decision 2026-09-24 (baseline = present-day PWDM levels, no surge increase)
+
+ssp245_2050:         # central case
+  year: 2050
+  sea_level_rise_m:  # Quarry Bay reference location, m relative to 1995-2014; row 2050 (decision 2026-09-24)
+    median: null     # source: HKO mean sea level projection data (data/raw/hko_msl_projection.html), table "5 emissions scenarios", row 2050, SSP2-4.5, "Median (m)"
+    low: null        # source: HKO mean sea level projection data (data/raw/hko_msl_projection.html), table "5 emissions scenarios", row 2050, SSP2-4.5, "Likely range (m)" lower bound
+    high: null       # source: HKO mean sea level projection data (data/raw/hko_msl_projection.html), table "5 emissions scenarios", row 2050, SSP2-4.5, "Likely range (m)" upper bound
+  # Rain / heat (decision 2026-10-07): HKO projections, row "2041-2060" (= this scenario's period), column Intermediate SSP2-4.5
+  rx1day_change_pct: null          # source: HKO annual maximum daily rainfall (Rx1day) projection data (data/raw/hko_rainfall_projection.html), row "2041-2060", Intermediate SSP2-4.5
+  mean_temp_change_c: null         # source: HKO annual mean temperature projection data (data/raw/hko_temp_projection.html), row "2041-2060", Intermediate SSP2-4.5
+  very_hot_days:                   # days per year; low/high = HKO "Likely range"
+    mean: null                     # source: HKO projection data of very hot days (data/raw/hko_hot_days_projection.html), row "2041-2060", Intermediate SSP2-4.5, "Mean"
+    low: null                      # source: as mean, "Likely range" lower bound
+    high: null                     # source: as mean, "Likely range" upper bound
+  hot_nights:                      # nights per year; low/high = HKO "Likely range"
+    mean: null                     # source: HKO projection data of hot nights (data/raw/hko_hot_nights_projection.html), row "2041-2060", Intermediate SSP2-4.5, "Mean"
+    low: null                      # source: as mean, "Likely range" lower bound
+    high: null                     # source: as mean, "Likely range" upper bound
+  # Likely ranges from HKO's "more details" pages (different data set: WCRP CMIP6; their means
+  # differ slightly from the headline values above, which stay in use). Range only.
+  mean_temp_change_c_likely:
+    low: null                      # source: HKO annual mean temperature projection data with more details (data/raw/hko_temp_projection_details.html, CMIP6 as at July 2022), row "2041-2060", Intermediate SSP2-4.5, "Likely range (℃)" lower bound
+    high: null                     # source: as low, upper bound
+    details_mean: null             # source: as low, "Mean (℃)" (reference only)
+  rx1day_change_pct_likely:
+    low: null                      # source: HKO Rx1day projection data with more details (data/raw/hko_rainfall_projection_details.html, CMIP6 as at July 2022), row "2041-2060", Intermediate SSP2-4.5, "Likely range (%)" lower bound
+    high: null                     # source: as low, upper bound
+    details_mean: null             # source: as low, "Mean (%)" (reference only)
+  # Storm surge increase due to climate change, m, added to the extreme still water
+  # level at the SAME return period (still-water model; PWDM §2.2.6 pairs it with the
+  # wave return period instead; departure documented in CLAUDE.md, 2026-09-24).
+  storm_surge_increase_m:
+    quarry_bay_north_point:
+      2: null  # source: PWDM Corrigendum 1/2022 Table 44, p. 23 (Year 2050 column)
+      5: null  # source: PWDM Corrigendum 1/2022 Table 44, p. 23 (Year 2050 column)
+      10: null  # source: PWDM Corrigendum 1/2022 Table 44, p. 24 (Year 2050 column)
+      20: null  # source: PWDM Corrigendum 1/2022 Table 44, p. 24 (Year 2050 column)
+      50: null  # source: PWDM Corrigendum 1/2022 Table 44, p. 24 (Year 2050 column)
+      100: null  # source: PWDM Corrigendum 1/2022 Table 44, p. 24 (Year 2050 column)
+      200: null  # source: PWDM Corrigendum 1/2022 Table 44, p. 24 (Year 2050 column)
+    tai_po_kau:
+      2: null  # source: PWDM Corrigendum 1/2022 Table 44, p. 23 (Year 2050 column)
+      5: null  # source: PWDM Corrigendum 1/2022 Table 44, p. 23 (Year 2050 column)
+      10: null  # source: PWDM Corrigendum 1/2022 Table 44, p. 24 (Year 2050 column)
+      20: null  # source: PWDM Corrigendum 1/2022 Table 44, p. 24 (Year 2050 column)
+      50: null  # source: PWDM Corrigendum 1/2022 Table 44, p. 24 (Year 2050 column)
+      100: null  # source: PWDM Corrigendum 1/2022 Table 44, p. 24 (Year 2050 column)
+      200: null  # source: PWDM Corrigendum 1/2022 Table 44, p. 24 (Year 2050 column)
+    tsim_bei_tsui:
+      2: null  # source: PWDM Corrigendum 1/2022 Table 44, p. 23 (Year 2050 column)
+      5: null  # source: PWDM Corrigendum 1/2022 Table 44, p. 23 (Year 2050 column)
+      10: null  # source: PWDM Corrigendum 1/2022 Table 44, p. 24 (Year 2050 column)
+      20: null  # source: PWDM Corrigendum 1/2022 Table 44, p. 24 (Year 2050 column)
+      50: null  # source: PWDM Corrigendum 1/2022 Table 44, p. 24 (Year 2050 column)
+      100: null  # source: PWDM Corrigendum 1/2022 Table 44, p. 24 (Year 2050 column)
+      200: null  # source: PWDM Corrigendum 1/2022 Table 44, p. 24 (Year 2050 column)
+    tai_o:
+      2: null  # source: PWDM Corrigendum 1/2022 Table 44, p. 23 (Year 2050 column)
+      5: null  # source: PWDM Corrigendum 1/2022 Table 44, p. 23 (Year 2050 column)
+      10: null  # source: PWDM Corrigendum 1/2022 Table 44, p. 24 (Year 2050 column)
+      20: null  # source: PWDM Corrigendum 1/2022 Table 44, p. 24 (Year 2050 column)
+      50: null  # source: PWDM Corrigendum 1/2022 Table 44, p. 24 (Year 2050 column)
+      100: null  # source: PWDM Corrigendum 1/2022 Table 44, p. 24 (Year 2050 column)
+      200: null  # source: PWDM Corrigendum 1/2022 Table 44, p. 24 (Year 2050 column)
+    waglan_island:
+      2: null  # source: PWDM Corrigendum 1/2022 Table 44, p. 23 (Year 2050 column)
+      5: null  # source: PWDM Corrigendum 1/2022 Table 44, p. 23 (Year 2050 column)
+      10: null  # source: PWDM Corrigendum 1/2022 Table 44, p. 24 (Year 2050 column)
+      20: null  # source: PWDM Corrigendum 1/2022 Table 44, p. 24 (Year 2050 column)
+      50: null  # source: PWDM Corrigendum 1/2022 Table 44, p. 24 (Year 2050 column)
+      100: null  # source: PWDM Corrigendum 1/2022 Table 44, p. 24 (Year 2050 column)
+      200: null  # source: PWDM Corrigendum 1/2022 Table 44, p. 24 (Year 2050 column)
+    ko_lau_wan:
+      2: null  # source: PWDM Corrigendum 1/2022 Table 44, p. 23 (Year 2050 column)
+      5: null  # source: PWDM Corrigendum 1/2022 Table 44, p. 23 (Year 2050 column)
+      10: null  # source: PWDM Corrigendum 1/2022 Table 44, p. 24 (Year 2050 column)
+      20: null  # source: PWDM Corrigendum 1/2022 Table 44, p. 24 (Year 2050 column)
+      50: null  # source: PWDM Corrigendum 1/2022 Table 44, p. 24 (Year 2050 column)
+      100: null  # source: PWDM Corrigendum 1/2022 Table 44, p. 24 (Year 2050 column)
+      200: null  # source: PWDM Corrigendum 1/2022 Table 44, p. 24 (Year 2050 column)
+    chi_ma_wan:
+      2: null  # source: PWDM Corrigendum 1/2022 Table 44, p. 23 (Year 2050 column)
+      5: null  # source: PWDM Corrigendum 1/2022 Table 44, p. 23 (Year 2050 column)
+      10: null  # source: PWDM Corrigendum 1/2022 Table 44, p. 24 (Year 2050 column)
+      20: null  # source: PWDM Corrigendum 1/2022 Table 44, p. 24 (Year 2050 column)
+      50: null  # source: PWDM Corrigendum 1/2022 Table 44, p. 24 (Year 2050 column)
+      100: null  # source: PWDM Corrigendum 1/2022 Table 44, p. 24 (Year 2050 column)
+      200: null  # source: PWDM Corrigendum 1/2022 Table 44, p. 24 (Year 2050 column)
+
+ssp585_2050:         # stress case
+  year: 2050
+  sea_level_rise_m:  # Quarry Bay reference location, m relative to 1995-2014; row 2050 (decision 2026-09-24)
+    median: null     # source: HKO mean sea level projection data (data/raw/hko_msl_projection.html), table "5 emissions scenarios", row 2050, SSP5-8.5, "Median (m)"
+    low: null        # source: HKO mean sea level projection data (data/raw/hko_msl_projection.html), table "5 emissions scenarios", row 2050, SSP5-8.5, "Likely range (m)" lower bound
+    high: null       # source: HKO mean sea level projection data (data/raw/hko_msl_projection.html), table "5 emissions scenarios", row 2050, SSP5-8.5, "Likely range (m)" upper bound
+  # Rain / heat (decision 2026-10-07): HKO projections, row "2041-2060" (= this scenario's period), column Very high SSP5-8.5
+  rx1day_change_pct: null          # source: HKO annual maximum daily rainfall (Rx1day) projection data (data/raw/hko_rainfall_projection.html), row "2041-2060", Very high SSP5-8.5
+  mean_temp_change_c: null         # source: HKO annual mean temperature projection data (data/raw/hko_temp_projection.html), row "2041-2060", Very high SSP5-8.5
+  very_hot_days:                   # days per year; low/high = HKO "Likely range"
+    mean: null                     # source: HKO projection data of very hot days (data/raw/hko_hot_days_projection.html), row "2041-2060", Very high SSP5-8.5, "Mean"
+    low: null                      # source: as mean, "Likely range" lower bound
+    high: null                     # source: as mean, "Likely range" upper bound
+  hot_nights:                      # nights per year; low/high = HKO "Likely range"
+    mean: null                     # source: HKO projection data of hot nights (data/raw/hko_hot_nights_projection.html), row "2041-2060", Very high SSP5-8.5, "Mean"
+    low: null                      # source: as mean, "Likely range" lower bound
+    high: null                     # source: as mean, "Likely range" upper bound
+  # Likely ranges from HKO's "more details" pages (different data set: WCRP CMIP6; their means
+  # differ slightly from the headline values above, which stay in use). Range only.
+  mean_temp_change_c_likely:
+    low: null                      # source: HKO annual mean temperature projection data with more details (data/raw/hko_temp_projection_details.html, CMIP6 as at July 2022), row "2041-2060", Very high SSP5-8.5, "Likely range (℃)" lower bound
+    high: null                     # source: as low, upper bound
+    details_mean: null             # source: as low, "Mean (℃)" (reference only)
+  rx1day_change_pct_likely:
+    low: null                      # source: HKO Rx1day projection data with more details (data/raw/hko_rainfall_projection_details.html, CMIP6 as at July 2022), row "2041-2060", Very high SSP5-8.5, "Likely range (%)" lower bound
+    high: null                     # source: as low, upper bound
+    details_mean: null             # source: as low, "Mean (%)" (reference only)
+  # Storm surge increase due to climate change, m, added to the extreme still water
+  # level at the SAME return period (still-water model; PWDM §2.2.6 pairs it with the
+  # wave return period instead; departure documented in CLAUDE.md, 2026-09-24).
+  # PWDM gives SSP2-4.5 only, so these SSP2-4.5 2050 values are a lower bound here.
+  storm_surge_increase_is_lower_bound: true  # source: PWDM §2.2.6 (p. 2) gives SSP2-4.5 only; lower-bound use for SSP5-8.5 is a project decision (2026-09-24)
+  storm_surge_increase_m:
+    quarry_bay_north_point:
+      2: null  # source: PWDM Corrigendum 1/2022 Table 44, p. 23 (Year 2050 column)
+      5: null  # source: PWDM Corrigendum 1/2022 Table 44, p. 23 (Year 2050 column)
+      10: null  # source: PWDM Corrigendum 1/2022 Table 44, p. 24 (Year 2050 column)
+      20: null  # source: PWDM Corrigendum 1/2022 Table 44, p. 24 (Year 2050 column)
+      50: null  # source: PWDM Corrigendum 1/2022 Table 44, p. 24 (Year 2050 column)
+      100: null  # source: PWDM Corrigendum 1/2022 Table 44, p. 24 (Year 2050 column)
+      200: null  # source: PWDM Corrigendum 1/2022 Table 44, p. 24 (Year 2050 column)
+    tai_po_kau:
+      2: null  # source: PWDM Corrigendum 1/2022 Table 44, p. 23 (Year 2050 column)
+      5: null  # source: PWDM Corrigendum 1/2022 Table 44, p. 23 (Year 2050 column)
+      10: null  # source: PWDM Corrigendum 1/2022 Table 44, p. 24 (Year 2050 column)
+      20: null  # source: PWDM Corrigendum 1/2022 Table 44, p. 24 (Year 2050 column)
+      50: null  # source: PWDM Corrigendum 1/2022 Table 44, p. 24 (Year 2050 column)
+      100: null  # source: PWDM Corrigendum 1/2022 Table 44, p. 24 (Year 2050 column)
+      200: null  # source: PWDM Corrigendum 1/2022 Table 44, p. 24 (Year 2050 column)
+    tsim_bei_tsui:
+      2: null  # source: PWDM Corrigendum 1/2022 Table 44, p. 23 (Year 2050 column)
+      5: null  # source: PWDM Corrigendum 1/2022 Table 44, p. 23 (Year 2050 column)
+      10: null  # source: PWDM Corrigendum 1/2022 Table 44, p. 24 (Year 2050 column)
+      20: null  # source: PWDM Corrigendum 1/2022 Table 44, p. 24 (Year 2050 column)
+      50: null  # source: PWDM Corrigendum 1/2022 Table 44, p. 24 (Year 2050 column)
+      100: null  # source: PWDM Corrigendum 1/2022 Table 44, p. 24 (Year 2050 column)
+      200: null  # source: PWDM Corrigendum 1/2022 Table 44, p. 24 (Year 2050 column)
+    tai_o:
+      2: null  # source: PWDM Corrigendum 1/2022 Table 44, p. 23 (Year 2050 column)
+      5: null  # source: PWDM Corrigendum 1/2022 Table 44, p. 23 (Year 2050 column)
+      10: null  # source: PWDM Corrigendum 1/2022 Table 44, p. 24 (Year 2050 column)
+      20: null  # source: PWDM Corrigendum 1/2022 Table 44, p. 24 (Year 2050 column)
+      50: null  # source: PWDM Corrigendum 1/2022 Table 44, p. 24 (Year 2050 column)
+      100: null  # source: PWDM Corrigendum 1/2022 Table 44, p. 24 (Year 2050 column)
+      200: null  # source: PWDM Corrigendum 1/2022 Table 44, p. 24 (Year 2050 column)
+    waglan_island:
+      2: null  # source: PWDM Corrigendum 1/2022 Table 44, p. 23 (Year 2050 column)
+      5: null  # source: PWDM Corrigendum 1/2022 Table 44, p. 23 (Year 2050 column)
+      10: null  # source: PWDM Corrigendum 1/2022 Table 44, p. 24 (Year 2050 column)
+      20: null  # source: PWDM Corrigendum 1/2022 Table 44, p. 24 (Year 2050 column)
+      50: null  # source: PWDM Corrigendum 1/2022 Table 44, p. 24 (Year 2050 column)
+      100: null  # source: PWDM Corrigendum 1/2022 Table 44, p. 24 (Year 2050 column)
+      200: null  # source: PWDM Corrigendum 1/2022 Table 44, p. 24 (Year 2050 column)
+    ko_lau_wan:
+      2: null  # source: PWDM Corrigendum 1/2022 Table 44, p. 23 (Year 2050 column)
+      5: null  # source: PWDM Corrigendum 1/2022 Table 44, p. 23 (Year 2050 column)
+      10: null  # source: PWDM Corrigendum 1/2022 Table 44, p. 24 (Year 2050 column)
+      20: null  # source: PWDM Corrigendum 1/2022 Table 44, p. 24 (Year 2050 column)
+      50: null  # source: PWDM Corrigendum 1/2022 Table 44, p. 24 (Year 2050 column)
+      100: null  # source: PWDM Corrigendum 1/2022 Table 44, p. 24 (Year 2050 column)
+      200: null  # source: PWDM Corrigendum 1/2022 Table 44, p. 24 (Year 2050 column)
+    chi_ma_wan:
+      2: null  # source: PWDM Corrigendum 1/2022 Table 44, p. 23 (Year 2050 column)
+      5: null  # source: PWDM Corrigendum 1/2022 Table 44, p. 23 (Year 2050 column)
+      10: null  # source: PWDM Corrigendum 1/2022 Table 44, p. 24 (Year 2050 column)
+      20: null  # source: PWDM Corrigendum 1/2022 Table 44, p. 24 (Year 2050 column)
+      50: null  # source: PWDM Corrigendum 1/2022 Table 44, p. 24 (Year 2050 column)
+      100: null  # source: PWDM Corrigendum 1/2022 Table 44, p. 24 (Year 2050 column)
+      200: null  # source: PWDM Corrigendum 1/2022 Table 44, p. 24 (Year 2050 column)
+
+ssp585_2100:         # sensitivity only
+  year: 2100
+  sea_level_rise_m:  # Quarry Bay reference location, m relative to 1995-2014; row 2100 (end-century; HKO gives decade rows)
+    median: null     # source: HKO mean sea level projection data (data/raw/hko_msl_projection.html), table "5 emissions scenarios", row 2100, SSP5-8.5, "Median (m)"
+    low: null        # source: HKO mean sea level projection data (data/raw/hko_msl_projection.html), table "5 emissions scenarios", row 2100, SSP5-8.5, "Likely range (m)" lower bound
+    high: null       # source: HKO mean sea level projection data (data/raw/hko_msl_projection.html), table "5 emissions scenarios", row 2100, SSP5-8.5, "Likely range (m)" upper bound
+  # Rain / heat (decision 2026-10-07): HKO projections, row "2081-2100" (= this scenario's period), column Very high SSP5-8.5
+  rx1day_change_pct: null          # source: HKO annual maximum daily rainfall (Rx1day) projection data (data/raw/hko_rainfall_projection.html), row "2081-2100", Very high SSP5-8.5
+  mean_temp_change_c: null         # source: HKO annual mean temperature projection data (data/raw/hko_temp_projection.html), row "2081-2100", Very high SSP5-8.5
+  very_hot_days:                   # days per year; low/high = HKO "Likely range"
+    mean: null                     # source: HKO projection data of very hot days (data/raw/hko_hot_days_projection.html), row "2081-2100", Very high SSP5-8.5, "Mean"
+    low: null                      # source: as mean, "Likely range" lower bound
+    high: null                     # source: as mean, "Likely range" upper bound
+  hot_nights:                      # nights per year; low/high = HKO "Likely range"
+    mean: null                     # source: HKO projection data of hot nights (data/raw/hko_hot_nights_projection.html), row "2081-2100", Very high SSP5-8.5, "Mean"
+    low: null                      # source: as mean, "Likely range" lower bound
+    high: null                     # source: as mean, "Likely range" upper bound
+  # Likely ranges from HKO's "more details" pages (different data set: WCRP CMIP6; their means
+  # differ slightly from the headline values above, which stay in use). Range only.
+  mean_temp_change_c_likely:
+    low: null                      # source: HKO annual mean temperature projection data with more details (data/raw/hko_temp_projection_details.html, CMIP6 as at July 2022), row "2081-2100", Very high SSP5-8.5, "Likely range (℃)" lower bound
+    high: null                     # source: as low, upper bound
+    details_mean: null             # source: as low, "Mean (℃)" (reference only)
+  rx1day_change_pct_likely:
+    low: null                      # source: HKO Rx1day projection data with more details (data/raw/hko_rainfall_projection_details.html, CMIP6 as at July 2022), row "2081-2100", Very high SSP5-8.5, "Likely range (%)" lower bound
+    high: null                     # source: as low, upper bound
+    details_mean: null             # source: as low, "Mean (%)" (reference only)
+  # Storm surge increase due to climate change, m, added to the extreme still water
+  # level at the SAME return period (still-water model; PWDM §2.2.6 pairs it with the
+  # wave return period instead; departure documented in CLAUDE.md, 2026-09-24).
+  # Sensitivity only. PWDM gives 2090 (SSP2-4.5), not 2100 or SSP5-8.5; used as the nearest available.
+  storm_surge_increase_is_lower_bound: true  # source: PWDM §2.2.6 (p. 2) gives SSP2-4.5 only (Year 2090 column); lower-bound use for SSP5-8.5 2100 is a project decision (2026-09-24)
+  storm_surge_increase_m:
+    quarry_bay_north_point:
+      2: null  # source: PWDM Corrigendum 1/2022 Table 44, p. 23 (Year 2090 column)
+      5: null  # source: PWDM Corrigendum 1/2022 Table 44, p. 23 (Year 2090 column)
+      10: null  # source: PWDM Corrigendum 1/2022 Table 44, p. 24 (Year 2090 column)
+      20: null  # source: PWDM Corrigendum 1/2022 Table 44, p. 24 (Year 2090 column)
+      50: null  # source: PWDM Corrigendum 1/2022 Table 44, p. 24 (Year 2090 column)
+      100: null  # source: PWDM Corrigendum 1/2022 Table 44, p. 24 (Year 2090 column)
+      200: null  # source: PWDM Corrigendum 1/2022 Table 44, p. 24 (Year 2090 column)
+    tai_po_kau:
+      2: null  # source: PWDM Corrigendum 1/2022 Table 44, p. 23 (Year 2090 column)
+      5: null  # source: PWDM Corrigendum 1/2022 Table 44, p. 23 (Year 2090 column)
+      10: null  # source: PWDM Corrigendum 1/2022 Table 44, p. 24 (Year 2090 column)
+      20: null  # source: PWDM Corrigendum 1/2022 Table 44, p. 24 (Year 2090 column)
+      50: null  # source: PWDM Corrigendum 1/2022 Table 44, p. 24 (Year 2090 column)
+      100: null  # source: PWDM Corrigendum 1/2022 Table 44, p. 24 (Year 2090 column)
+      200: null  # source: PWDM Corrigendum 1/2022 Table 44, p. 24 (Year 2090 column)
+    tsim_bei_tsui:
+      2: null  # source: PWDM Corrigendum 1/2022 Table 44, p. 23 (Year 2090 column)
+      5: null  # source: PWDM Corrigendum 1/2022 Table 44, p. 23 (Year 2090 column)
+      10: null  # source: PWDM Corrigendum 1/2022 Table 44, p. 24 (Year 2090 column)
+      20: null  # source: PWDM Corrigendum 1/2022 Table 44, p. 24 (Year 2090 column)
+      50: null  # source: PWDM Corrigendum 1/2022 Table 44, p. 24 (Year 2090 column)
+      100: null  # source: PWDM Corrigendum 1/2022 Table 44, p. 24 (Year 2090 column)
+      200: null  # source: PWDM Corrigendum 1/2022 Table 44, p. 24 (Year 2090 column)
+    tai_o:
+      2: null  # source: PWDM Corrigendum 1/2022 Table 44, p. 23 (Year 2090 column)
+      5: null  # source: PWDM Corrigendum 1/2022 Table 44, p. 23 (Year 2090 column)
+      10: null  # source: PWDM Corrigendum 1/2022 Table 44, p. 24 (Year 2090 column)
+      20: null  # source: PWDM Corrigendum 1/2022 Table 44, p. 24 (Year 2090 column)
+      50: null  # source: PWDM Corrigendum 1/2022 Table 44, p. 24 (Year 2090 column)
+      100: null  # source: PWDM Corrigendum 1/2022 Table 44, p. 24 (Year 2090 column)
+      200: null  # source: PWDM Corrigendum 1/2022 Table 44, p. 24 (Year 2090 column)
+    waglan_island:
+      2: null  # source: PWDM Corrigendum 1/2022 Table 44, p. 23 (Year 2090 column)
+      5: null  # source: PWDM Corrigendum 1/2022 Table 44, p. 23 (Year 2090 column)
+      10: null  # source: PWDM Corrigendum 1/2022 Table 44, p. 24 (Year 2090 column)
+      20: null  # source: PWDM Corrigendum 1/2022 Table 44, p. 24 (Year 2090 column)
+      50: null  # source: PWDM Corrigendum 1/2022 Table 44, p. 24 (Year 2090 column)
+      100: null  # source: PWDM Corrigendum 1/2022 Table 44, p. 24 (Year 2090 column)
+      200: null  # source: PWDM Corrigendum 1/2022 Table 44, p. 24 (Year 2090 column)
+    ko_lau_wan:
+      2: null  # source: PWDM Corrigendum 1/2022 Table 44, p. 23 (Year 2090 column)
+      5: null  # source: PWDM Corrigendum 1/2022 Table 44, p. 23 (Year 2090 column)
+      10: null  # source: PWDM Corrigendum 1/2022 Table 44, p. 24 (Year 2090 column)
+      20: null  # source: PWDM Corrigendum 1/2022 Table 44, p. 24 (Year 2090 column)
+      50: null  # source: PWDM Corrigendum 1/2022 Table 44, p. 24 (Year 2090 column)
+      100: null  # source: PWDM Corrigendum 1/2022 Table 44, p. 24 (Year 2090 column)
+      200: null  # source: PWDM Corrigendum 1/2022 Table 44, p. 24 (Year 2090 column)
+    chi_ma_wan:
+      2: null  # source: PWDM Corrigendum 1/2022 Table 44, p. 23 (Year 2090 column)
+      5: null  # source: PWDM Corrigendum 1/2022 Table 44, p. 23 (Year 2090 column)
+      10: null  # source: PWDM Corrigendum 1/2022 Table 44, p. 24 (Year 2090 column)
+      20: null  # source: PWDM Corrigendum 1/2022 Table 44, p. 24 (Year 2090 column)
+      50: null  # source: PWDM Corrigendum 1/2022 Table 44, p. 24 (Year 2090 column)
+      100: null  # source: PWDM Corrigendum 1/2022 Table 44, p. 24 (Year 2090 column)
+      200: null  # source: PWDM Corrigendum 1/2022 Table 44, p. 24 (Year 2090 column)

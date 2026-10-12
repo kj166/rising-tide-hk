@@ -1,0 +1,30 @@
+{
+  "name": "rising-tide",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Rising Tide: an independent study of physical climate risk in Link REIT's Hong Kong portfolio (static SvelteKit site).",
+  "scripts": {
+    "dev": "vite dev --port 5173",
+    "build": "vite build",
+    "build:noaerial": "SHOW_LANDSD_AERIAL=false BUILD_DIR=build-noaerial vite build",
+    "preview": "vite preview --port 4173 --strictPort",
+    "serve": "node scripts/serve.mjs build 4180",
+    "og": "node scripts/og.mjs",
+    "test:e2e": "npm run build:noaerial && npm run build && playwright test",
+    "shots": "node scripts/shots.mjs"
+  },
+  "dependencies": {
+    "@observablehq/plot": "^0.6.17",
+    "maplibre-gl": "^5.24.0",
+    "scrollama": "^3.2.0"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.64.0",
+    "@sveltejs/adapter-static": "^3.0.10",
+    "@sveltejs/kit": "^2.70.3",
+    "@sveltejs/vite-plugin-svelte": "^5.1.1",
+    "svelte": "^5.57.2",
+    "vite": "^6.4.4"
+  }
+}

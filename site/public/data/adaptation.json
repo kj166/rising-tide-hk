@@ -1,0 +1,351 @@
+{
+ "discount_rate": 0.04,
+ "horizon_years": 25,
+ "scenario": "ssp245_2050",
+ "assets": [
+  {
+   "valuation_no": 129,
+   "name": "Chai Wan Car Service Centre",
+   "eal_hkd": [
+    2100000.0,
+    4300000.0
+   ],
+   "barriers": {
+    "0.5": {
+     "central_hkd": [
+      12000000.0,
+      21000000.0
+     ],
+     "upper_hkd": [
+      19000000.0,
+      34000000.0
+     ]
+    },
+    "1": {
+     "central_hkd": [
+      20000000.0,
+      34000000.0
+     ],
+     "upper_hkd": [
+      34000000.0,
+      56000000.0
+     ]
+    }
+   }
+  },
+  {
+   "valuation_no": 128,
+   "name": "Hung Hom Car Service Centre",
+   "eal_hkd": [
+    1100000.0,
+    2600000.0
+   ],
+   "barriers": {
+    "0.5": {
+     "central_hkd": [
+      9100000.0,
+      14000000.0
+     ],
+     "upper_hkd": [
+      17000000.0,
+      25000000.0
+     ]
+    },
+    "1": {
+     "central_hkd": [
+      9100000.0,
+      14000000.0
+     ],
+     "upper_hkd": [
+      17000000.0,
+      25000000.0
+     ]
+    }
+   }
+  },
+  {
+   "valuation_no": 41,
+   "name": "Lek Yuen Plaza",
+   "eal_hkd": [
+    800000.0,
+    2700000.0
+   ],
+   "barriers": {
+    "0.5": {
+     "central_hkd": [
+      4200000.0,
+      5200000.0
+     ],
+     "upper_hkd": [
+      0.0,
+      0.0
+     ]
+    },
+    "1": {
+     "central_hkd": [
+      9400000.0,
+      11000000.0
+     ],
+     "upper_hkd": [
+      12000000.0,
+      14000000.0
+     ]
+    }
+   }
+  },
+  {
+   "valuation_no": 126,
+   "name": "The Quayside",
+   "eal_hkd": [
+    430000.0,
+    2400000.0
+   ],
+   "barriers": {
+    "0.5": {
+     "central_hkd": [
+      2800000.0,
+      5100000.0
+     ],
+     "upper_hkd": [
+      6600000.0,
+      12000000.0
+     ]
+    },
+    "1": {
+     "central_hkd": [
+      2800000.0,
+      5100000.0
+     ],
+     "upper_hkd": [
+      6600000.0,
+      12000000.0
+     ]
+    }
+   }
+  },
+  {
+   "valuation_no": 66,
+   "name": "Sam Shing Commercial Centre",
+   "eal_hkd": [
+    430000.0,
+    1200000.0
+   ],
+   "barriers": {
+    "0.5": {
+     "central_hkd": [
+      2800000.0,
+      4600000.0
+     ],
+     "upper_hkd": [
+      6700000.0,
+      11000000.0
+     ]
+    },
+    "1": {
+     "central_hkd": [
+      2800000.0,
+      4600000.0
+     ],
+     "upper_hkd": [
+      6700000.0,
+      11000000.0
+     ]
+    }
+   }
+  },
+  {
+   "valuation_no": 12,
+   "name": "Wo Che Plaza",
+   "eal_hkd": [
+    480000.0,
+    2100000.0
+   ],
+   "barriers": {
+    "0.5": {
+     "central_hkd": [
+      2800000.0,
+      4700000.0
+     ],
+     "upper_hkd": [
+      0.0,
+      0.0
+     ]
+    },
+    "1": {
+     "central_hkd": [
+      5900000.0,
+      9200000.0
+     ],
+     "upper_hkd": [
+      7500000.0,
+      11000000.0
+     ]
+    }
+   }
+  },
+  {
+   "valuation_no": 27,
+   "name": "Sha Kok Commercial Centre",
+   "eal_hkd": [
+    260000.0,
+    1200000.0
+   ],
+   "barriers": {
+    "0.5": {
+     "central_hkd": [
+      1700000.0,
+      2700000.0
+     ],
+     "upper_hkd": [
+      4100000.0,
+      6500000.0
+     ]
+    },
+    "1": {
+     "central_hkd": [
+      1700000.0,
+      2700000.0
+     ],
+     "upper_hkd": [
+      4100000.0,
+      6500000.0
+     ]
+    }
+   }
+  },
+  {
+   "valuation_no": 49,
+   "name": "Long Ping Commercial Centre",
+   "eal_hkd": [
+    310000.0,
+    1200000.0
+   ],
+   "barriers": {
+    "0.5": {
+     "central_hkd": [
+      2000000.0,
+      2600000.0
+     ],
+     "upper_hkd": [
+      4800000.0,
+      6200000.0
+     ]
+    },
+    "1": {
+     "central_hkd": [
+      2000000.0,
+      2600000.0
+     ],
+     "upper_hkd": [
+      4800000.0,
+      6200000.0
+     ]
+    }
+   }
+  },
+  {
+   "valuation_no": 38,
+   "name": "Tai Yuen Commercial Centre",
+   "eal_hkd": [
+    210000.0,
+    980000.0
+   ],
+   "barriers": {
+    "0.5": {
+     "central_hkd": [
+      1400000.0,
+      2100000.0
+     ],
+     "upper_hkd": [
+      3300000.0,
+      5100000.0
+     ]
+    },
+    "1": {
+     "central_hkd": [
+      1400000.0,
+      2100000.0
+     ],
+     "upper_hkd": [
+      3300000.0,
+      5100000.0
+     ]
+    }
+   }
+  },
+  {
+   "valuation_no": 26,
+   "name": "Chung On Shopping Centre",
+   "eal_hkd": [
+    180000.0,
+    960000.0
+   ],
+   "barriers": {
+    "0.5": {
+     "central_hkd": [
+      1200000.0,
+      2100000.0
+     ],
+     "upper_hkd": [
+      2900000.0,
+      5000000.0
+     ]
+    },
+    "1": {
+     "central_hkd": [
+      1200000.0,
+      2100000.0
+     ],
+     "upper_hkd": [
+      2900000.0,
+      5000000.0
+     ]
+    }
+   }
+  }
+ ],
+ "totals": {
+  "0.5": {
+   "central_hkd": [
+    40000000.0,
+    64000000.0
+   ],
+   "upper_hkd": [
+    65000000.0,
+    110000000.0
+   ]
+  },
+  "1": {
+   "central_hkd": [
+    56000000.0,
+    87000000.0
+   ],
+   "upper_hkd": [
+    99000000.0,
+    150000000.0
+   ]
+  }
+ },
+ "rain_driven": [
+  {
+   "valuation_no": 8,
+   "name": "Temple Mall North"
+  },
+  {
+   "valuation_no": 22,
+   "name": "Chuk Yuen Plaza"
+  },
+  {
+   "valuation_no": 120,
+   "name": "Retail and Car Park within Hong Shui Court"
+  },
+  {
+   "valuation_no": 5,
+   "name": "Temple Mall South"
+  },
+  {
+   "valuation_no": 53,
+   "name": "Hing Wah Plaza"
+  }
+ ]
+}

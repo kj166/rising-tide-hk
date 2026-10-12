@@ -1,0 +1,55 @@
+{
+ "rule": "onset minus still-water level, whole cm; negative = exceeded",
+ "assets": [
+  {
+   "valuation_no": 126,
+   "name": "The Quayside",
+   "onset_basis": "lidar_sill",
+   "value_rank_hk": 2,
+   "valued_above": [
+    "Lok Fu Place"
+   ],
+   "margins_cm": [
+    {
+     "scenario": "ssp245_2050",
+     "slr_quantile": "median",
+     "return_period": 100,
+     "margin_cm": 9
+    },
+    {
+     "scenario": "ssp245_2050",
+     "slr_quantile": "high",
+     "return_period": 100,
+     "margin_cm": 1
+    },
+    {
+     "scenario": "ssp585_2050",
+     "slr_quantile": "high",
+     "return_period": 100,
+     "margin_cm": -3
+    }
+   ],
+   "reached": [
+    {
+     "scenario": "ssp245_2050",
+     "slr_quantile": "median",
+     "return_period": 200,
+     "reached": true
+    }
+   ]
+  }
+ ],
+ "events": [
+  {
+   "valuation_no": 129,
+   "name": "Chai Wan Car Service Centre",
+   "event": "mangkhut_2018",
+   "gauge_name": "Quarry Bay",
+   "observed_peak_mcd": 3.88,
+   "peak_source": "Hong Kong Observatory, Tropical Cyclones in 2018, Table 3.5.5",
+   "above_entry_cm": 15,
+   "below_floor_cm": 7,
+   "flooded": true
+  }
+ ]
+}
